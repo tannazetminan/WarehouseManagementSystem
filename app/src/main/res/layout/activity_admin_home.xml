@@ -10,5 +10,43 @@
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="welcome admin" />
+        android:text="welcome admin"
+        android:textSize="24sp"/>
+
+    <LinearLayout
+        android:layout_marginTop="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+        <Button
+            android:id="@+id/btnGoToReports"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/txtBtnGoToReports"
+            android:layout_margin="8dp"
+            android:backgroundTint="@color/primaryColor"
+            android:textColor="#FFFFFF"
+            />
+
+        <Button
+            android:id="@+id/btnGoToInventory"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/txtBtnGoToInventory"
+            android:layout_margin="8dp"
+            android:backgroundTint="@color/primaryColor"
+            android:textColor="#FFFFFF"
+            />
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/top10RecyclerView"
+        android:layout_marginTop="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 </LinearLayout>
