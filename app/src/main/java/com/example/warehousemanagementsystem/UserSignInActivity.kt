@@ -2,6 +2,7 @@ package com.example.warehousemanagementsystem
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -52,6 +53,8 @@ class UserSignInActivity : AppCompatActivity() {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 if (response.isSuccessful) {
                     val userType = response.body()?.type
+                    val loginResponse = response.body()
+                    Log.d("Login", "Response: $loginResponse")
                     if (userType == "admin") {
                         startActivity(Intent(this@UserSignInActivity, AdminHomeActivity::class.java))
                     } else {

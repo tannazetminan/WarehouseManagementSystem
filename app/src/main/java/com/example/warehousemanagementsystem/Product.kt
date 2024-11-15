@@ -8,7 +8,7 @@ data class Product(
     val prodCategory: String? = null,
     val salePrice: Double,
     val costPrice: Double,
-    val supplier: String? = null,
+    //val supplier: String? = null, //we do not need supplier as this is not necessary for our case as per previous discussion or do we?
     val quantity: Int? = null,
     val image_url: String? =null,
 )
