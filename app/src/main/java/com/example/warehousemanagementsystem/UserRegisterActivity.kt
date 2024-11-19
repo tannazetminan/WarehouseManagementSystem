@@ -41,11 +41,13 @@ class UserRegisterActivity : AppCompatActivity() {
             val email = emailEditText.text.toString().trim()
             val phone = phoneEditText.text.toString().trim()
             val adminCode = adminCodeEditText.text.toString().trim()
+            val id = 0  // Let the backend handle ID generation
+
 
             if (validateInput(fullname, phone, email, password)) {
                 // Determine user type based on admin code
                 val userType = if (adminCode == "CSIS4280") "admin" else "customer"
-                val user = User(fullname, phone, email, password, userType)
+                val user = User(id, fullname, phone, email, password, userType)
                 registerUser(user)
             }
         }

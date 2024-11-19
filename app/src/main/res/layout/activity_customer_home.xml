@@ -1,14 +1,174 @@
-<!-- File: res/layout/activity_main.xml -->
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 
+    <!-- Header -->
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/customerWelcomeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Welcome to the Store!"
+        android:textColor="@color/primaryColor"
+        android:textSize="24sp" />
+
+    <!-- Navigation Buttons -->
+    <LinearLayout
+        android:id="@+id/navigationButtons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text=" welcome customer!" />
-</LinearLayout>
+        android:layout_below="@id/customerWelcomeText"
+        android:layout_margin="16dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/editProfileButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/primaryColor"
+            android:text="Edit Profile"
+            android:textColor="#FFFFFF"
+            app:icon="@drawable/edit_profile" />
+
+        <View
+            android:layout_width="8dp"
+            android:layout_height="match_parent" />
+
+        <Button
+            android:id="@+id/cartButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/primaryColor"
+            android:text="Cart"
+            app:icon="@drawable/cart" />
+    </LinearLayout>
+
+    <!-- Filters Section -->
+    <LinearLayout
+        android:id="@+id/filterSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/navigationButtons"
+        android:layout_marginHorizontal="16dp"
+        android:orientation="horizontal">
+
+        <!-- Category Filter -->
+        <Spinner
+            android:id="@+id/categorySpinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="#6200EA"
+            android:spinnerMode="dropdown" />
+
+        <View
+            android:layout_width="8dp"
+            android:layout_height="match_parent" />
+
+        <!-- Price Filter -->
+        <Spinner
+            android:id="@+id/priceSpinner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="#6200EA"
+            android:spinnerMode="dropdown" />
+    </LinearLayout>
+
+    <!-- Search Bar -->
+    <EditText
+        android:id="@+id/searchBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/filterSection"
+        android:layout_margin="16dp"
+        android:background="@drawable/edit_text_bg"
+        android:hint="Search products..."
+        android:padding="12dp" />
+
+    <!-- RecyclerView for Product Categories -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/productsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/filterSection"
+        android:layout_marginTop="81dp"
+        android:layout_marginBottom="8dp"
+        android:clipToPadding="false"
+        android:padding="16dp" />
+</RelativeLayout>
+
+    <!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent"-->
+<!--    android:background="#FFFFFF">-->
+
+<!--    &lt;!&ndash; Header &ndash;&gt;-->
+<!--    <TextView-->
+<!--        android:id="@+id/customerWelcomeText"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Welcome to the Store!"-->
+<!--        android:textSize="24sp"-->
+<!--        android:textColor="#6200EA"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        android:layout_centerHorizontal="true" />-->
+
+<!--    &lt;!&ndash; Navigation Buttons &ndash;&gt;-->
+<!--    <LinearLayout-->
+<!--        android:id="@+id/navigationButtons"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="horizontal"-->
+<!--        android:layout_margin="16dp"-->
+<!--        android:layout_below="@id/customerWelcomeText">-->
+
+<!--        <Button-->
+<!--            android:id="@+id/editProfileButton"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1"-->
+<!--            android:backgroundTint="#6200EA"-->
+<!--            android:text="Edit Profile"-->
+<!--            android:textColor="#FFFFFF" />-->
+
+<!--        <View-->
+<!--            android:layout_width="8dp"-->
+<!--            android:layout_height="match_parent" />-->
+
+<!--        <Button-->
+<!--            android:id="@+id/cartButton"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_weight="1"-->
+<!--            android:backgroundTint="#6200EA"-->
+<!--            android:text="Cart"-->
+<!--            android:textColor="#FFFFFF" />-->
+<!--    </LinearLayout>-->
+
+<!--    &lt;!&ndash; Search Bar &ndash;&gt;-->
+<!--    <EditText-->
+<!--        android:id="@+id/searchBar"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:hint="Search products..."-->
+<!--        android:padding="12dp"-->
+<!--        android:layout_below="@id/navigationButtons"-->
+<!--        android:layout_margin="16dp"-->
+<!--        android:background="@drawable/edit_text_bg" />-->
+
+<!--    &lt;!&ndash; RecyclerView for Product Categories &ndash;&gt;-->
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        android:id="@+id/productsRecyclerView"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_below="@id/searchBar"-->
+<!--        android:padding="16dp"-->
+<!--        android:clipToPadding="false"-->
+<!--        android:layout_marginBottom="8dp" />-->
+<!--</RelativeLayout>-->

@@ -34,9 +34,10 @@ class UserSignInActivity : AppCompatActivity() {
         loginButton.setOnClickListener {
             val email = emailEditText.text.toString().trim()
             val password = passwordEditText.text.toString().trim()
+            val id= 0
 
             if (email.isNotEmpty() && password.isNotEmpty()) {
-                loginUser(User(email = email, password = password))
+                loginUser(User(id=id, email = email, password = password))
             } else {
                 Toast.makeText(this, "Please enter both email and password", Toast.LENGTH_SHORT).show()
             }

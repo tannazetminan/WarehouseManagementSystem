@@ -18,12 +18,7 @@
         android:usesCleartextTraffic="true"
         android:requestLegacyExternalStorage="true"
         tools:targetApi="31">
-        <activity
-            android:name=".AddProductFormActivity"
-            android:exported="false" />
-        <activity
-            android:name=".InventoryActivity"
-            android:exported="false" />
+
         <activity android:name=".MainActivity" />
         <activity android:name=".UserRegisterActivity" />
         <activity
@@ -31,12 +26,18 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".AdminHomeActivity" />
         <activity android:name=".CustomerHomeActivity" />
+        <activity android:name=".UserProfileActivity"/>
+        <activity android:name=".UserEditProfileActivity"/>
+        <activity android:name=".CartActivity"/>
+        <activity android:name=".ProductDetailActivity"/>
+        <activity android:name=".AddProductFormActivity"/>
+        <activity android:name=".InventoryActivity"/>
+
     </application>
 
 </manifest>
