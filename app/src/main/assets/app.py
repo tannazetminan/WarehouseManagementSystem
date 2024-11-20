@@ -15,24 +15,41 @@
 # 2. To register for a customer or an admin with "CSIS4280" code
 #    curl http://localhost:8888/register
 #
-# 3. To create a new product:
+# 3. To see the User Profile
+#    curl http://localhost:8888/user/<user_id>  methods=['GET']
+#
+# 4. Update User Profile
+#    curl http://localhost:8888/user/<user_id> methods=['PUT']
+#
+# 5. To create a new product:
 # curl -X POST http://localhost:8888/create_product -H "Content-Type: application/json" -d '{  "prodName": "Product Name",  "prodDescription": "Description of the product",  "prodCategory": "Category of the product",  "salePrice": 100.00,  "costPrice": 50.00,  "quantity": 20,  "image_url": "path/to/image.jpg"}'
 #
-# 4. To retrieve all products:
+# 6. To retrieve all products:
 # curl http://localhost:8888/retrieve_all_products
 #
-# 5. To retrieve a single product by ID:
+# 7. To retrieve a single product by ID:
 # curl http://localhost:8888/retrieve_single_product/<product_id>
 #
-# 6. To delete a single product by ID:
+# 8. To delete a single product by ID:
 # curl -X DELETE http://localhost:8888/delete_single_product/<product_id>
 #
-# 7. To update a product by ID:
+# 9. To update a product by ID:
 # curl -X PUT http://localhost:8888/update_single_product/<product_id> -H "Content-Type: application/json" -d '{  "prodName": "Updated Product Name",  "prodDescription": "Updated Description",  "prodCategory": "Updated Category",  "salePrice": 150.00,  "costPrice": 75.00,  "quantity": 30,  "image_url": "path/to/updated_image.jpg"}'
 #
-# 8. To create a transaction:
+# 10. To create a transaction:
 #curl -X POST http://localhost:8888/transaction -H "Content-Type: application/json" -d '{  "user": "user_id_here",  "products": [    {"prodName": "Product Name", "salePrice": 100.00, "quantity": 2},    {"prodName": "Another Product", "salePrice": 50.00, "quantity": 1}  ],  "trans_date": "2024-11-14",  "trans_time": "14:30:00"}'
-
+#
+# 11. To see user's cart items
+#   curl -X GET http://localhost:8888/cart/<user_id>
+#
+# 12. To Add an item to user's cart
+#   curl -X Post http://localhost:8888/cart/<user_id>
+#
+# 13. To Add an item to user's cart
+#   curl -X Post http://localhost:8888/cart/<user_id>
+#
+# 14. To remove an item from the cart
+#   curl -X Post http://localhost:8888/cart/<user_id>/<product_id>
 
 
 from flask import Flask, jsonify, request
@@ -103,9 +120,42 @@ def login():
     if user and bcrypt.checkpw(password.encode('utf-8'), user['password']):
         return jsonify({
             "message": "Login successful",
-            "type": user["type"]  # Pass user type to route frontend accordingly
+            "type": user["type"],
+            "user_id": str(user["_id"])  # Include user ID in the response
         }), 200
     return jsonify({"error": "Invalid credentials"}), 401
+
+
+# Get User Profile
+@app.route('/user/<user_id>', methods=['GET'])
+def get_user_profile(user_id):
+    user = users_collection.find_one({"_id": ObjectId(user_id)})
+    if user:
+        return jsonify({
+            "fullname": user["fullname"],
+            "email": user["email"],
+            "phone": user["phone"]
+        }), 200
+    else:
+        return jsonify({"error": "User not found"}), 404
+
+
+# Update User Profile
+@app.route('/user/<user_id>', methods=['PUT'])
+def update_user_profile(user_id):
+    data = request.get_json()
+    updated_data = {
+        "fullname": data.get("fullname"),
+        "email": data.get("email"),
+        "phone": data.get("phone")
+    }
+
+    result = users_collection.update_one({"_id": ObjectId(user_id)}, {"$set": updated_data})
+    if result.matched_count > 0:
+        return jsonify({"message": "Profile updated successfully"}), 200
+    else:
+        return jsonify({"error": "User not found"}), 404
+
 
 
 # upload image
@@ -270,7 +320,56 @@ def create_transaction():
 
     return jsonify({"message": "Transaction created successfully"}), 201
 
+
+# Endpoint to add a product to the cart
+@app.route('/cart/<user_id>', methods=['POST'])
+def add_to_cart(user_id):
+    data = request.get_json()
+    product_id = data['product_id']
+
+    user = users_collection.find_one({"_id": ObjectId(user_id)})
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    # Add the product to the user's cart
+    cart = user.get("cart", [])
+    if product_id not in cart:
+        cart.append(product_id)
+        users_collection.update_one({"_id": ObjectId(user_id)}, {"$set": {"cart": cart}})
+        return jsonify({"message": "Product added to cart"}), 200
+    else:
+        return jsonify({"message": "Product is already in cart"}), 400
+
+# Endpoint to get the user's cart
+@app.route('/cart/<user_id>', methods=['GET'])
+def get_cart(user_id):
+    user = users_collection.find_one({"_id": ObjectId(user_id)})
+    if user:
+        cart_product_ids = user.get("cart", [])
+        products = products_collection.find({"_id": {"$in": [ObjectId(prod_id) for prod_id in cart_product_ids]}})
+        product_list = [product for product in products]
+        return jsonify(product_list), 200
+    else:
+        return jsonify({"error": "User not found"}), 404
+
+# Endpoint to remove a product from the cart
+@app.route('/cart/<user_id>/<product_id>', methods=['DELETE'])
+def remove_from_cart(user_id, product_id):
+    user = users_collection.find_one({"_id": ObjectId(user_id)})
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    cart = user.get("cart", [])
+    if product_id in cart:
+        cart.remove(product_id)
+        users_collection.update_one({"_id": ObjectId(user_id)}, {"$set": {"cart": cart}})
+        return jsonify({"message": "Product removed from cart"}), 200
+    else:
+        return jsonify({"error": "Product not found in cart"}), 404
+
+
+
+
 if __name__ == '__main__':
     # Run the application on all available IPs on port 8888
     app.run(host='0.0.0.0', port=8888)
-

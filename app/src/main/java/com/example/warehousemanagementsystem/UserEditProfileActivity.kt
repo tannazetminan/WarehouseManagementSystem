@@ -1,5 +1,6 @@
 package com.example.warehousemanagementsystem
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -9,6 +10,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+
+
 class UserEditProfileActivity : AppCompatActivity() {
 
     private lateinit var fullnameEditText: EditText
@@ -16,7 +19,7 @@ class UserEditProfileActivity : AppCompatActivity() {
     private lateinit var phoneEditText: EditText
     private lateinit var saveProfileButton: Button
     private lateinit var apiService: ApiService
-    private val userId = "12345" // Replace with actual logged-in user ID
+    private var userId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +33,17 @@ class UserEditProfileActivity : AppCompatActivity() {
         val baseUrl = readBaseUrl(this)
         apiService = RetrofitClient.getRetrofitInstance(baseUrl).create(ApiService::class.java)
 
-        fetchUserProfile()
+
+        // Retrieve user ID from SharedPreferences
+        val sharedPreferences = getSharedPreferences("UserPreferences", MODE_PRIVATE)
+        userId = sharedPreferences.getString("user_id", null)
+
+        if (userId != null) {
+            fetchUserProfile()
+        } else {
+            Toast.makeText(this, "User ID not found", Toast.LENGTH_SHORT).show()
+            finish()
+        }
 
         saveProfileButton.setOnClickListener {
             val updatedProfile = UserProfile(
@@ -43,38 +56,43 @@ class UserEditProfileActivity : AppCompatActivity() {
     }
 
     private fun fetchUserProfile() {
-        apiService.getUserProfile(userId).enqueue(object : Callback<UserProfile> {
-            override fun onResponse(call: Call<UserProfile>, response: Response<UserProfile>) {
-                if (response.isSuccessful) {
-                    val profile = response.body()
-                    fullnameEditText.setText(profile?.fullname)
-                    emailEditText.setText(profile?.email)
-                    phoneEditText.setText(profile?.phone)
-                } else {
-                    Toast.makeText(this@UserEditProfileActivity, "Failed to load profile", Toast.LENGTH_SHORT).show()
+        userId?.let {
+            apiService.getUserProfile(it).enqueue(object : Callback<UserProfile> {
+                override fun onResponse(call: Call<UserProfile>, response: Response<UserProfile>) {
+                    if (response.isSuccessful) {
+                        val profile = response.body()
+                        fullnameEditText.setText(profile?.fullname)
+                        emailEditText.setText(profile?.email)
+                        phoneEditText.setText(profile?.phone)
+                    } else {
+                        Toast.makeText(this@UserEditProfileActivity, "Failed to load profile", Toast.LENGTH_SHORT).show()
+                    }
                 }
-            }
 
-            override fun onFailure(call: Call<UserProfile>, t: Throwable) {
-                Toast.makeText(this@UserEditProfileActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
+                override fun onFailure(call: Call<UserProfile>, t: Throwable) {
+                    Toast.makeText(this@UserEditProfileActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
     }
 
     private fun updateUserProfile(profile: UserProfile) {
-        apiService.updateUserProfile(userId, profile).enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                if (response.isSuccessful) {
-                    Toast.makeText(this@UserEditProfileActivity, "Profile updated successfully", Toast.LENGTH_SHORT).show()
-                    finish()
-                } else {
-                    Toast.makeText(this@UserEditProfileActivity, "Failed to update profile", Toast.LENGTH_SHORT).show()
+        userId?.let {
+            apiService.updateUserProfile(it, profile).enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(this@UserEditProfileActivity, "Profile updated successfully", Toast.LENGTH_SHORT).show()
+                        startActivity(Intent(this@UserEditProfileActivity, UserProfileActivity::class.java))
+                        finish()
+                    } else {
+                        Toast.makeText(this@UserEditProfileActivity, "Failed to update profile", Toast.LENGTH_SHORT).show()
+                    }
                 }
-            }
 
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                Toast.makeText(this@UserEditProfileActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Toast.makeText(this@UserEditProfileActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
     }
 }

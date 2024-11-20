@@ -24,6 +24,9 @@ class CustomerHomeActivity : AppCompatActivity() {
     private lateinit var productsRecyclerView: RecyclerView
     private lateinit var apiService: ApiService
     private lateinit var productsAdapter: ProductsAdapter
+    private var userId: String? = null
+    private var fullname: String? = null
+
 
     private var productsList = mutableListOf<Product>()
 
@@ -41,13 +44,17 @@ class CustomerHomeActivity : AppCompatActivity() {
         val baseUrl = readBaseUrl(this)
         apiService = RetrofitClient.getRetrofitInstance(baseUrl).create(ApiService::class.java)
 
+        // Retrieve user ID from SharedPreferences
+        val sharedPreferences = getSharedPreferences("UserPreferences", MODE_PRIVATE)
+        userId = sharedPreferences.getString("user_id", null)
+
         setupRecyclerView()
         setupSpinners()
         fetchProducts()
 
         // Edit Profile Navigation
         editProfileButton.setOnClickListener {
-            startActivity(Intent(this, UserEditProfileActivity::class.java))
+            startActivity(Intent(this, UserProfileActivity::class.java))
         }
 
         // Cart Navigation
@@ -65,19 +72,19 @@ class CustomerHomeActivity : AppCompatActivity() {
         })
     }
 
-    private fun setupRecyclerView() {
-        productsAdapter = ProductsAdapter(productsList, onAddToCart = { product ->
-            // Add product to cart
-            Toast.makeText(this, "${product.prodName} added to cart", Toast.LENGTH_SHORT).show()
-        }) { product ->
-            // Navigate to Product Detail Activity
-            val intent = Intent(this, ProductDetailActivity::class.java)
-            intent.putExtra("product_id", product.prodID)
-            startActivity(intent)
-        }
-        productsRecyclerView.layoutManager = LinearLayoutManager(this)
-        productsRecyclerView.adapter = productsAdapter
-    }
+//    private fun setupRecyclerView() {
+//        productsAdapter = ProductsAdapter(productsList, onAddToCart = { product ->
+//            // Add product to cart
+//            Toast.makeText(this, "${product.prodName} added to cart", Toast.LENGTH_SHORT).show()
+//        }) { product ->
+//            // Navigate to Product Detail Activity
+//            val intent = Intent(this, ProductDetailActivity::class.java)
+//            intent.putExtra("product_id", product.prodID)
+//            startActivity(intent)
+//        }
+//        productsRecyclerView.layoutManager = LinearLayoutManager(this)
+//        productsRecyclerView.adapter = productsAdapter
+//    }
 
     private fun setupSpinners() {
         // Example categories and price ranges
@@ -157,109 +164,37 @@ class CustomerHomeActivity : AppCompatActivity() {
         }
         productsAdapter.updateList(filteredList)
     }
+
+    private fun setupRecyclerView() {
+        productsAdapter = ProductsAdapter(productsList, onAddToCart = { product ->
+            addToCart(product)
+        }) { product ->
+            // Navigate to Product Detail Activity
+            val intent = Intent(this, ProductDetailActivity::class.java)
+            intent.putExtra("product_id", product.prodID)
+            startActivity(intent)
+        }
+        productsRecyclerView.layoutManager = LinearLayoutManager(this)
+        productsRecyclerView.adapter = productsAdapter
+    }
+
+    private fun addToCart(product: Product) {
+        userId?.let { userId ->
+            apiService.addCartItem(userId, product).enqueue(object : Callback<Void> {
+                override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(this@CustomerHomeActivity, "${product.prodName} added to cart", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this@CustomerHomeActivity, "Failed to add item to cart", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<Void>, t: Throwable) {
+                    Toast.makeText(this@CustomerHomeActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
+    }
+
 }
 
-
-//package com.example.warehousemanagementsystem
-//
-//import ProductsAdapter
-//import android.content.Intent
-//import android.os.Bundle
-//import android.text.Editable
-//import android.text.TextWatcher
-//import android.widget.Button
-//import android.widget.EditText
-//import android.widget.Toast
-//import androidx.appcompat.app.AppCompatActivity
-//import androidx.recyclerview.widget.LinearLayoutManager
-//import androidx.recyclerview.widget.RecyclerView
-//import retrofit2.Call
-//import retrofit2.Callback
-//import retrofit2.Response
-//
-//class CustomerHomeActivity : AppCompatActivity() {
-//
-//    private lateinit var editProfileButton: Button
-//    private lateinit var cartButton: Button
-//    private lateinit var searchBar: EditText
-//    private lateinit var productsRecyclerView: RecyclerView
-//    private lateinit var apiService: ApiService
-//    private lateinit var productsAdapter: ProductsAdapter
-//
-//    private var productsList = mutableListOf<Product>()
-//
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setContentView(R.layout.activity_customer_home)
-//
-//        editProfileButton = findViewById(R.id.editProfileButton)
-//        cartButton = findViewById(R.id.cartButton)
-//        searchBar = findViewById(R.id.searchBar)
-//        productsRecyclerView = findViewById(R.id.productsRecyclerView)
-//
-//        // Initialize API service
-//        val baseUrl = readBaseUrl(this)
-//        apiService = RetrofitClient.getRetrofitInstance(baseUrl).create(ApiService::class.java)
-//
-//        setupRecyclerView()
-//        fetchProducts()
-//
-//        // Edit Profile Navigation
-//        editProfileButton.setOnClickListener {
-//            startActivity(Intent(this, UserEditProfileActivity::class.java))
-//        }
-//
-//        // Cart Navigation
-//        cartButton.setOnClickListener {
-//            startActivity(Intent(this, CartActivity::class.java))
-//        }
-//
-//        // Search Functionality
-//        searchBar.addTextChangedListener(object : TextWatcher {
-//            override fun afterTextChanged(s: Editable?) {}
-//            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-//            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-//                filterProducts(s.toString())
-//            }
-//        })
-//    }
-//
-//    private fun setupRecyclerView() {
-//        productsAdapter = ProductsAdapter(productsList) { product ->
-//            // Navigate to Product Detail Activity
-//            val intent = Intent(this, ProductDetailActivity::class.java)
-//            intent.putExtra("product_id", product.prodID)
-//            startActivity(intent)
-//        }
-//        productsRecyclerView.layoutManager = LinearLayoutManager(this)
-//        productsRecyclerView.adapter = productsAdapter
-//    }
-//
-//    private fun fetchProducts() {
-//        apiService.getAllProducts().enqueue(object : Callback<List<Product>> {
-//            override fun onResponse(call: Call<List<Product>>, response: Response<List<Product>>) {
-//                if (response.isSuccessful) {
-//                    productsList.clear()
-//                    productsList.addAll(response.body()!!)
-//                    productsAdapter.notifyDataSetChanged()
-//                } else {
-//                    Toast.makeText(this@CustomerHomeActivity, "Failed to load products", Toast.LENGTH_SHORT).show()
-//                }
-//            }
-//
-//            override fun onFailure(call: Call<List<Product>>, t: Throwable) {
-//                Toast.makeText(this@CustomerHomeActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
-//            }
-//        })
-//    }
-//
-//    private fun filterProducts(query: String) {
-//        val filteredList = productsList.filter {
-//            it.prodName.contains(query, ignoreCase = true) ||
-//                    it.prodCategory?.contains(query, ignoreCase = true) == true ||
-//                    it.salePrice.toString().contains(query)
-//        }
-//        productsAdapter.updateList(filteredList)
-//    }
-//
-//}

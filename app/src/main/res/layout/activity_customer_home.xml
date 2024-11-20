@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:backgroundTint="@color/primaryColor"
-            android:text="Edit Profile"
+            android:text="Profile"
             android:textColor="#FFFFFF"
             app:icon="@drawable/edit_profile" />
 

@@ -17,7 +17,8 @@ class UserProfileActivity : AppCompatActivity() {
     private lateinit var phoneTextView: TextView
     private lateinit var editProfileButton: Button
     private lateinit var apiService: ApiService
-    private val userId = "12345" // Replace with actual logged-in user ID
+    private var userId: String? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +31,11 @@ class UserProfileActivity : AppCompatActivity() {
 
         val baseUrl = readBaseUrl(this)
         apiService = RetrofitClient.getRetrofitInstance(baseUrl).create(ApiService::class.java)
+
+        // Retrieve user ID from SharedPreferences
+        val sharedPreferences = getSharedPreferences("UserPreferences", MODE_PRIVATE)
+        userId = sharedPreferences.getString("user_id", null)
+
         fetchUserProfile()
 
         editProfileButton.setOnClickListener {
@@ -38,21 +44,27 @@ class UserProfileActivity : AppCompatActivity() {
     }
 
     private fun fetchUserProfile() {
-        apiService.getUserProfile(userId).enqueue(object : Callback<UserProfile> {
-            override fun onResponse(call: Call<UserProfile>, response: Response<UserProfile>) {
-                if (response.isSuccessful) {
-                    val profile = response.body()
-                    fullnameTextView.text = "Full Name: ${profile?.fullname}"
-                    emailTextView.text = "Email: ${profile?.email}"
-                    phoneTextView.text = "Phone: ${profile?.phone}"
-                } else {
-                    Toast.makeText(this@UserProfileActivity, "Failed to load profile", Toast.LENGTH_SHORT).show()
-                }
-            }
+        val sharedPreferences = getSharedPreferences("UserPreferences", MODE_PRIVATE)
+        val userId = sharedPreferences.getString("user_id", null)
 
-            override fun onFailure(call: Call<UserProfile>, t: Throwable) {
-                Toast.makeText(this@UserProfileActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
+        if (userId != null) {
+            apiService.getUserProfile(userId).enqueue(object : Callback<UserProfile> {
+                override fun onResponse(call: Call<UserProfile>, response: Response<UserProfile>) {
+                    if (response.isSuccessful) {
+                        val profile = response.body()
+                        fullnameTextView.text = "Full Name: ${profile?.fullname}"
+                        emailTextView.text = "Email: ${profile?.email}"
+                        phoneTextView.text = "Phone: ${profile?.phone}"
+                    } else {
+                        Toast.makeText(this@UserProfileActivity, "Failed to load profile", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<UserProfile>, t: Throwable) {
+                    Toast.makeText(this@UserProfileActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
     }
+
 }
