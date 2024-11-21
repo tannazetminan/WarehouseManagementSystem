@@ -34,10 +34,9 @@ class UserSignInActivity : AppCompatActivity() {
         loginButton.setOnClickListener {
             val email = emailEditText.text.toString().trim()
             val password = passwordEditText.text.toString().trim()
-            val id= 0
 
             if (email.isNotEmpty() && password.isNotEmpty()) {
-                loginUser(User(id=id, email = email, password = password))
+                loginUser(User( email = email, password = password))
             } else {
                 Toast.makeText(this, "Please enter both email and password", Toast.LENGTH_SHORT).show()
             }
@@ -56,29 +55,49 @@ class UserSignInActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val loginResponse = response.body()
                     val userType = loginResponse?.type
+                    val userId = loginResponse?.user_id
+
                     Log.d("Login", "Response: $loginResponse")
 
-                    // Save userType in Shared Preferences
-                    val sharedPreferences = getSharedPreferences("UserPreferences", MODE_PRIVATE)
-                    val editor = sharedPreferences.edit()
-                    editor.putString("userType", userType)
-                    editor.apply()
+                    if (userId != null) {
+                        // Save user_id to SharedPreferences
+                        val sharedPreferences = getSharedPreferences("UserPreferences", MODE_PRIVATE)
+                        val editor = sharedPreferences.edit()
+                        editor.putString("user_id", userId)
+                        editor.apply()
 
-                    if (userType == "admin") {
-                        startActivity(Intent(this@UserSignInActivity, AdminHomeActivity::class.java))
+                        Toast.makeText(this@UserSignInActivity, "Login successful", Toast.LENGTH_SHORT).show()
+
+                        // Redirect based on user type
+                        when (userType) {
+                            "admin" -> {
+                                val intent = Intent(this@UserSignInActivity, AdminHomeActivity::class.java)
+                                intent.putExtra("user_id", userId)
+                                startActivity(intent)
+                            }
+                            "customer" -> {
+                                val intent = Intent(this@UserSignInActivity, CustomerHomeActivity::class.java)
+                                intent.putExtra("user_id", userId)
+                                startActivity(intent)
+                            }
+                            else -> {
+                                Toast.makeText(this@UserSignInActivity, "Unknown user type", Toast.LENGTH_SHORT).show()
+                            }
+                        }
                     } else {
-                        startActivity(Intent(this@UserSignInActivity, CustomerHomeActivity::class.java))
+                        Toast.makeText(this@UserSignInActivity, "Failed to retrieve user ID", Toast.LENGTH_SHORT).show()
                     }
-                    finish() // Prevent back navigation to the login screen
                 } else {
-                    Toast.makeText(this@UserSignInActivity, "Login Failed", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@UserSignInActivity, "Invalid credentials", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                Toast.makeText(this@UserSignInActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                Log.e("Login", "Error: ${t.message}")
+                Toast.makeText(this@UserSignInActivity, "Login failed: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
+
 
 }

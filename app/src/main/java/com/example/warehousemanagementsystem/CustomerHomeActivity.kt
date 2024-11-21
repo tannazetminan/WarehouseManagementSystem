@@ -188,6 +188,8 @@ class CustomerHomeActivity : AppCompatActivity() {
     private fun fetchUserProfile() {
         val sharedPreferences = getSharedPreferences("UserPreferences", MODE_PRIVATE)
         val userId = sharedPreferences.getString("user_id", null)
+        Toast.makeText(this@CustomerHomeActivity, userId + " f", Toast.LENGTH_SHORT).show()
+
 
         if (userId != null) {
             apiService.getUserProfile(userId).enqueue(object : Callback<UserProfile> {
