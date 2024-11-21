@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardCornerRadius="12dp"
-    app:cardElevation="12dp">
+    app:cardElevation="12dp"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -95,23 +96,34 @@
         </LinearLayout>
 
 
-        <ImageView
-            android:id="@+id/inventoryIncreasebtn"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/add"
-            android:contentDescription="Add to inventory"
-            android:layout_gravity="center"
-            android:padding="4dp"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="4dp"
+        android:padding="4dp">
+        <TextView
+            android:id="@+id/txvInventoryIncreaseLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Increase Inventory by:" />
 
-        <ImageView
-            android:id="@+id/InventoryDecrease"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/minus"
-            android:contentDescription="Subtract from inventory"
-            android:layout_gravity="center"
-            android:padding="4dp"/>
+        <EditText
+            android:id="@+id/etInventoryIncrease"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="0"
+            android:minHeight="48dp" />
+
+        <Button
+            android:id="@+id/btnAddInventoryAmount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/primaryColor"
+            android:text="Add"/>
+
+    </LinearLayout>
+
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>
