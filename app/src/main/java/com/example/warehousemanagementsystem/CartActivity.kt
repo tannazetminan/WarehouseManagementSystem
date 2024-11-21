@@ -63,7 +63,7 @@ class CartActivity : AppCompatActivity() {
 
     private fun removeFromCart(product: Product) {
         userId?.let {
-            apiService.removeCartItem(it, product.prodID.toString()).enqueue(object : Callback<Void> {
+            apiService.removeCartItem(it, product._id.toString()).enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
                     if (response.isSuccessful) {
                         cartItems.remove(product)

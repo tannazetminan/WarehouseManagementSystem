@@ -160,7 +160,7 @@ class CustomerHomeActivity : AppCompatActivity() {
         }) { product ->
             // Navigate to Product Detail Activity
             val intent = Intent(this, ProductDetailActivity::class.java)
-            intent.putExtra("product_id", product.prodID)
+            intent.putExtra("product_id", product._id)
             startActivity(intent)
         }
         productsRecyclerView.layoutManager = LinearLayoutManager(this)

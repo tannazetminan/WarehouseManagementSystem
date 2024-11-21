@@ -22,7 +22,7 @@ class ProductsAdapter(
         val addToCartButton: ImageView = view.findViewById(R.id.addToCartButton)
 
         fun bind(product: Product) {
-            productName.text = product.prodName + ". id: "  +product.prodID
+            productName.text = product.prodName + ". id: "  +product._id
             productCategory.text = product.prodCategory ?: "Unknown"
             productPrice.text = "$${product.salePrice}"
             Glide.with(itemView).load(product.image_url).into(productImage)
