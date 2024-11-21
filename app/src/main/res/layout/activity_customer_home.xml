@@ -4,28 +4,50 @@
     android:layout_height="match_parent">
 
     <!-- Header -->
-    <TextView
-        android:id="@+id/customerWelcomeText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="16dp"
-        android:text="Welcome to the Store!"
-        android:textAlignment="textStart"
-        android:textColor="@color/primaryColor"
-        android:textSize="16sp"
-        android:textStyle="bold" />
 
 
     <!-- Filters Section -->
     <LinearLayout
+        android:id="@+id/titleLayout"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@drawable/edit_text_bg"
+        android:orientation="horizontal"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/customerWelcomeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|center_vertical"
+            android:layout_weight="0.8"
+            android:text="Welcome \nTo the Store!"
+            android:textAlignment="textStart"
+            android:textColor="@color/primaryColor"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/editProfileButton"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_gravity="center|center_vertical"
+            android:layout_weight="0.2"
+            android:backgroundTint="@color/primaryColor"
+            android:text="Profile"
+            android:textColor="#FFFFFF"
+            app:icon="@drawable/edit_profile" />
+
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/filterSection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/customerWelcomeText"
+        android:layout_below="@+id/titleLayout"
         android:layout_marginHorizontal="16dp"
 
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <!-- Category Filter -->
@@ -85,23 +107,10 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/editProfileButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="@color/primaryColor"
-            android:text="Profile"
-            android:textColor="#FFFFFF"
-            app:icon="@drawable/edit_profile" />
-
-        <View
-            android:layout_width="8dp"
-            android:layout_height="match_parent" />
-
-        <Button
             android:id="@+id/cartButton"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginBottom="10dp"
             android:layout_weight="1"
             android:backgroundTint="@color/primaryColor"
             android:text="Cart"
