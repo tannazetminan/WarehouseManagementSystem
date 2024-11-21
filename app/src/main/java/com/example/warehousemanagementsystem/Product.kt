@@ -2,7 +2,7 @@ package com.example.warehousemanagementsystem
 
 data class Product(
 
-    val prodID: Int,
+    val _id: String, // This maps to the MongoDB `_id`
     val prodName: String,
     val prodDescription: String? = null,
     val prodCategory: String? = null,

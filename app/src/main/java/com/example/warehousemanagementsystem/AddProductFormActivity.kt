@@ -156,7 +156,7 @@ class AddProductFormActivity : AppCompatActivity() {
     // Create a product after image is uploaded
     private fun createProduct() {
         val product = Product(
-            prodID = 0,  // Let the backend handle ID generation
+            _id= null.toString(),
             prodName = etProductName.text.toString(),
             prodDescription = etProductDescription.text.toString(),
             prodCategory = etProductCategory.text.toString(),
