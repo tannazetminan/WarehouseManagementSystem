@@ -32,6 +32,17 @@
             />
 
         <Button
+            android:id="@+id/btnGoToUsers"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/txtBtnGoToUsers"
+            android:layout_margin="8dp"
+            android:backgroundTint="@color/primaryColor"
+            android:textColor="#FFFFFF"
+            />
+
+        <Button
             android:id="@+id/btnGoToInventory"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
