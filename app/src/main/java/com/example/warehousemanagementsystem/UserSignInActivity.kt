@@ -49,19 +49,27 @@ class UserSignInActivity : AppCompatActivity() {
         })
     }
 
+
     private fun loginUser(user: User) {
         apiService.loginUser(user).enqueue(object : Callback<LoginResponse> {
             override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                 if (response.isSuccessful) {
-                    val userType = response.body()?.type
                     val loginResponse = response.body()
+                    val userType = loginResponse?.type
                     Log.d("Login", "Response: $loginResponse")
+
+                    // Save userType in Shared Preferences
+                    val sharedPreferences = getSharedPreferences("UserPreferences", MODE_PRIVATE)
+                    val editor = sharedPreferences.edit()
+                    editor.putString("userType", userType)
+                    editor.apply()
+
                     if (userType == "admin") {
                         startActivity(Intent(this@UserSignInActivity, AdminHomeActivity::class.java))
                     } else {
                         startActivity(Intent(this@UserSignInActivity, CustomerHomeActivity::class.java))
                     }
-                    finish()  // Prevent back navigation to the login screen
+                    finish() // Prevent back navigation to the login screen
                 } else {
                     Toast.makeText(this@UserSignInActivity, "Login Failed", Toast.LENGTH_SHORT).show()
                 }
@@ -72,4 +80,5 @@ class UserSignInActivity : AppCompatActivity() {
             }
         })
     }
+
 }

@@ -17,6 +17,7 @@ import retrofit2.Response
 class CustomerHomeActivity : AppCompatActivity() {
 
     private lateinit var editProfileButton: Button
+    private lateinit var customerWelcomeText: TextView
     private lateinit var cartButton: Button
     private lateinit var searchBar: EditText
     private lateinit var categorySpinner: Spinner
@@ -25,7 +26,6 @@ class CustomerHomeActivity : AppCompatActivity() {
     private lateinit var apiService: ApiService
     private lateinit var productsAdapter: ProductsAdapter
     private var userId: String? = null
-    private var fullname: String? = null
 
 
     private var productsList = mutableListOf<Product>()
@@ -40,6 +40,7 @@ class CustomerHomeActivity : AppCompatActivity() {
         categorySpinner = findViewById(R.id.categorySpinner)
         priceSpinner = findViewById(R.id.priceSpinner)
         productsRecyclerView = findViewById(R.id.productsRecyclerView)
+        customerWelcomeText = findViewById(R.id.customerWelcomeText)
 
         val baseUrl = readBaseUrl(this)
         apiService = RetrofitClient.getRetrofitInstance(baseUrl).create(ApiService::class.java)
@@ -51,8 +52,10 @@ class CustomerHomeActivity : AppCompatActivity() {
         setupRecyclerView()
         setupSpinners()
         fetchProducts()
+        fetchUserProfile()
 
-        // Edit Profile Navigation
+
+            // Edit Profile Navigation
         editProfileButton.setOnClickListener {
             startActivity(Intent(this, UserProfileActivity::class.java))
         }
@@ -71,20 +74,6 @@ class CustomerHomeActivity : AppCompatActivity() {
             }
         })
     }
-
-//    private fun setupRecyclerView() {
-//        productsAdapter = ProductsAdapter(productsList, onAddToCart = { product ->
-//            // Add product to cart
-//            Toast.makeText(this, "${product.prodName} added to cart", Toast.LENGTH_SHORT).show()
-//        }) { product ->
-//            // Navigate to Product Detail Activity
-//            val intent = Intent(this, ProductDetailActivity::class.java)
-//            intent.putExtra("product_id", product.prodID)
-//            startActivity(intent)
-//        }
-//        productsRecyclerView.layoutManager = LinearLayoutManager(this)
-//        productsRecyclerView.adapter = productsAdapter
-//    }
 
     private fun setupSpinners() {
         // Example categories and price ranges
@@ -196,5 +185,27 @@ class CustomerHomeActivity : AppCompatActivity() {
         }
     }
 
+    private fun fetchUserProfile() {
+        val sharedPreferences = getSharedPreferences("UserPreferences", MODE_PRIVATE)
+        val userId = sharedPreferences.getString("user_id", null)
+
+        if (userId != null) {
+            apiService.getUserProfile(userId).enqueue(object : Callback<UserProfile> {
+                override fun onResponse(call: Call<UserProfile>, response: Response<UserProfile>) {
+                    if (response.isSuccessful) {
+                        val profile = response.body()
+                        customerWelcomeText.text = "Dear ${profile?.fullname}\nWelcome to the Store"
+
+                    } else {
+                        Toast.makeText(this@CustomerHomeActivity, "Failed to load profile", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<UserProfile>, t: Throwable) {
+                    Toast.makeText(this@CustomerHomeActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
+    }
 }
 

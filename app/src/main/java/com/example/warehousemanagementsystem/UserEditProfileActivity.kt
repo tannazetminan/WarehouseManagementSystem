@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import retrofit2.Call
@@ -18,6 +19,7 @@ class UserEditProfileActivity : AppCompatActivity() {
     private lateinit var emailEditText: EditText
     private lateinit var phoneEditText: EditText
     private lateinit var saveProfileButton: Button
+    private lateinit var backImg: ImageView
     private lateinit var apiService: ApiService
     private var userId: String? = null
 
@@ -29,6 +31,8 @@ class UserEditProfileActivity : AppCompatActivity() {
         emailEditText = findViewById(R.id.emailEditText)
         phoneEditText = findViewById(R.id.phoneEditText)
         saveProfileButton = findViewById(R.id.saveProfileButton)
+        backImg = findViewById(R.id.imgViewBackMain)
+
 
         val baseUrl = readBaseUrl(this)
         apiService = RetrofitClient.getRetrofitInstance(baseUrl).create(ApiService::class.java)
@@ -53,6 +57,18 @@ class UserEditProfileActivity : AppCompatActivity() {
             )
             updateUserProfile(updatedProfile)
         }
+
+
+        backImg.setOnClickListener{
+            val sharedPreferences = getSharedPreferences("UserPreferences", MODE_PRIVATE)
+            val userType = sharedPreferences.getString("userType", null)
+            if (userType == "admin") {
+                startActivity(Intent(this@UserEditProfileActivity, AdminHomeActivity::class.java))
+            } else {
+                startActivity(Intent(this@UserEditProfileActivity, CustomerHomeActivity::class.java))
+            }
+        }
+
     }
 
     private fun fetchUserProfile() {
