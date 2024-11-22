@@ -13,8 +13,15 @@
         android:text="Inventory"
         android:textSize="24sp"/>
 
+    <Spinner
+        android:id="@+id/spinnerInventoryCategories"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        />
+
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/top10RecyclerView"
+        android:id="@+id/inventoryRecyclerView"
         android:layout_marginTop="12dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

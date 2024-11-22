@@ -39,6 +39,9 @@ interface ApiService {
     @DELETE("cart/{user_id}/{product_id}")
     fun removeCartItem(@Path("user_id") userId: String, @Path("product_id") productId: String): Call<Void>
 
+    @PUT("products/{productId}")
+    fun updateProductQuantity(@Path("productId") productId: String, @Body updatedProduct: Product): Call<Product>
+
 }
 data class LoginResponse(
     val message: String,

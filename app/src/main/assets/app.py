@@ -295,6 +295,46 @@ def update_single_product(product_id):
 
 
 
+
+# Endpoint to update product quantity
+@app.route('/update_productQuantity/<product_id>', methods=['PUT'])
+def update_product_quantity(product_id):
+    # Ensure that the product_id is a valid ObjectId
+    if not ObjectId.is_valid(product_id):
+        return jsonify({"error": "Invalid product ID format"}), 400
+
+    # Parse the request body
+    data = request.get_json()
+
+    # Validate that the quantity is provided and is a positive integer
+    if 'quantity' not in data or not isinstance(data['quantity'], int) or data['quantity'] <= 0:
+        return jsonify({"error": "Invalid quantity provided"}), 400
+
+    try:
+        # Fetch the existing product by its ID
+        product = products_collection.find_one({"_id": ObjectId(product_id)})
+
+        # If the product is not found, return an error message
+        if not product:
+            return jsonify({"error": "Product not found"}), 404
+
+        # Use $inc to increment the quantity in the database
+        result = products_collection.update_one(
+            {"_id": ObjectId(product_id)},
+            {"$inc": {"quantity": data['quantity']}}  # Increment quantity by the provided value
+        )
+
+        # Check if the product was updated successfully
+        if result.matched_count > 0:
+            return jsonify({"message": f"Product quantity increased by {data['quantity']} successfully"}), 200
+        else:
+            return jsonify({"error": "Failed to update product quantity"}), 400
+
+    except Exception as e:
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
+
+
 # Endpoint to create transaction
 @app.route('/transaction', methods=['POST'])
 def create_transaction():
