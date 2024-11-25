@@ -58,6 +58,7 @@ import bcrypt
 import os
 from werkzeug.utils import secure_filename
 from bson import ObjectId  # Import ObjectId from bson
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -359,13 +360,16 @@ def update_product_quantity(product_id):
 
 
 # Endpoint to create transaction
-@app.route('/transaction', methods=['POST'])
+@app.route('/create_transaction', methods=['POST'])
 def create_transaction():
     data = request.get_json()
-    user_id = data['user']  # User ID from the transaction request
+    user_id = data['user_id']  # User ID from the transaction request
     products = data['products']  # List of products in the transaction
-    trans_date = data['trans_date']
-    trans_time = data['trans_time']
+    # Get the current date and time
+    current_datetime = datetime.now()
+    # Set 'trans_date' to today's date and 'trans_time' to the current time
+    trans_date = current_datetime.date().strftime('%Y-%m-%d')  # Format date as 'YYYY-MM-DD'
+    trans_time = current_datetime.strftime('%H:%M:%S')  # Format time as 'HH:MM:SS'
 
     # Iterate over each product in the transaction to update its quantity
     for product_data in products:
@@ -401,7 +405,7 @@ def create_transaction():
         "trans_date": trans_date,
         "trans_time": trans_time
     }
-    trasactions_collection.insert_one(transaction_data)
+    transactions_collection.insert_one(transaction_data)
 
     return jsonify({"message": "Transaction completed successfully"}), 201
 
