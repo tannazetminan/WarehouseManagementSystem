@@ -39,8 +39,13 @@ interface ApiService {
     @DELETE("cart/{user_id}/{product_id}")
     fun removeCartItem(@Path("user_id") userId: String, @Path("product_id") productId: String): Call<Void>
 
-    @PUT("products/{productId}")
-    fun updateProductQuantity(@Path("productId") productId: String, @Body updatedProduct: Product): Call<Product>
+    //need to send updates quatity to certain product ID, not the whole Object to match backend
+    @PUT("update_productQuantity/{productId}")
+    fun updateProductQuantity(
+        @Path("productId") productId: String,
+        @Body quantityUpdate: Map<String, String>
+    ): Call<Void>
+
 
 }
 data class LoginResponse(

@@ -4,15 +4,13 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardCornerRadius="12dp"
-    app:cardElevation="12dp"
-    >
+    app:cardElevation="12dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="8dp"
-        >
+        android:padding="8dp">
 
         <ImageView
             android:id="@+id/inventoryProductImage"
@@ -21,108 +19,132 @@
             android:layout_marginEnd="8dp"
             android:scaleType="centerCrop"
             android:src="@drawable/placeholder"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="10dp" />
 
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="153dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:padding="4dp">
+            android:padding="2dp">
 
             <TextView
                 android:id="@+id/inventoryProductName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:text="Product Name"
-                android:textStyle="bold"
-                android:layout_marginTop="10dp"/>
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/inventoryProductCategory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Category"
-                android:layout_marginTop="4dp"/>
+                android:layout_marginTop="4dp"
+                android:textSize="12sp"
+                android:text="Category" />
 
             <TextView
                 android:id="@+id/inventoryProductDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Description"
-                android:layout_marginTop="4dp"/>
+                android:layout_marginTop="4dp"
+                android:textSize="12sp"
+                android:text="Description" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="4dp">
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/inventoryProductCostPriceLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Cost Pirce: " />
+                    android:text="Cost Price: "
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/inventoryProductCostPrice"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="$0.00" />
+                    android:layout_height="match_parent"
+                    android:text="$0.00"
+                    android:textSize="12sp" />
 
             </LinearLayout>
-
-
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="4dp">
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/inventoryProductSalePricLabel"
+                    android:id="@+id/inventoryProductSalePriceLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Cost Pirce: " />
+                    android:text="Sale Price: "
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/inventoryProductSalePrice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textSize="12sp"
                     android:text="$0.00" />
 
             </LinearLayout>
         </LinearLayout>
 
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="4dp"
-        android:padding="4dp">
-        <TextView
-            android:id="@+id/txvInventoryIncreaseLabel"
+        <!-- Vertical Layout for Quantity and Update Button -->
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Increase Inventory by:" />
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="4dp">
 
-        <EditText
-            android:id="@+id/etInventoryIncrease"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="0"
-            android:minHeight="48dp" />
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/btnIncreaseInventory"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="@color/primaryColor"
-            android:text="Add"/>
+                <Button
+                    android:id="@+id/btnDecreaseInventory"
+                    android:layout_width="54dp"
+                    android:layout_height="30dp"
+                    android:layout_marginEnd="2dp"
+                    android:padding="1dp"
+                    android:text="-"
+                    android:textSize="14sp" />
 
-    </LinearLayout>
+                <EditText
+                    android:id="@+id/tvCurrentQuantity"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_marginEnd="2dp"
+                    android:text="0" />
+
+                <Button
+                    android:id="@+id/btnIncreaseInventory"
+                    android:layout_width="52dp"
+                    android:layout_height="30dp"
+                    android:padding="1dp"
+                    android:text="+"
+                    android:textSize="10sp" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnUpdateInventory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="@color/primaryColor"
+                android:text="Update Inventory" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

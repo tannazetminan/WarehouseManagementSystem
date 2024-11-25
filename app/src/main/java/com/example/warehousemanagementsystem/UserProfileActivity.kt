@@ -18,6 +18,7 @@ class UserProfileActivity : AppCompatActivity() {
     private lateinit var phoneTextView: TextView
     private lateinit var editProfileButton: Button
     private lateinit var backImg: ImageView
+    private lateinit var logoutButton: Button
     private lateinit var apiService: ApiService
     private var userId: String? = null
 
@@ -31,6 +32,7 @@ class UserProfileActivity : AppCompatActivity() {
         emailTextView = findViewById(R.id.emailTextView)
         phoneTextView = findViewById(R.id.phoneTextView)
         editProfileButton = findViewById(R.id.editProfileButton)
+        logoutButton = findViewById(R.id.logoutButton)
         backImg = findViewById(R.id.imgViewBackMain)
 
         val baseUrl = readBaseUrl(this)
@@ -44,6 +46,10 @@ class UserProfileActivity : AppCompatActivity() {
 
         editProfileButton.setOnClickListener {
             startActivity(Intent(this, UserEditProfileActivity::class.java))
+        }
+
+        logoutButton.setOnClickListener {
+            logout()
         }
 
         backImg.setOnClickListener{
@@ -81,5 +87,17 @@ class UserProfileActivity : AppCompatActivity() {
             })
         }
     }
+    // Logout logic: clear SharedPreferences and redirect to the sign-in activity
+    private fun logout() {
+        val sharedPreferences = getSharedPreferences("UserPreferences", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.clear()  // Clear all saved preferences
+        editor.apply()
 
+        // Redirect to sign-in activity
+        Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show()
+        val intent = Intent(this, UserSignInActivity::class.java)
+        startActivity(intent)
+        finish()  // Finish current activity to prevent user from returning to the profile screen
+    }
 }

@@ -3,6 +3,7 @@ package com.example.warehousemanagementsystem
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -98,6 +99,7 @@ class InventoryActivity : AppCompatActivity() {
 
     private fun filterProductsByCategory(category: String) {
         if (category == "All Categories") {
+            Log.d("InventoryActivity", "Product list size: ${productsList.size}")
             inventoryAdapter.updateList(productsList)
         } else {
             val filteredList = productsList.filter { it.prodCategory == category }
@@ -106,43 +108,50 @@ class InventoryActivity : AppCompatActivity() {
     }
 
     private fun setUpInventoryRecyclerView() {
-        inventoryAdapter = InventoryAdapter(productsList, onIncrease = { product, increaseAmount ->
-            increaseInventory(product, increaseAmount)
-        }) { product ->
-            // Navigate to Product Detail Activity
-            val intent = Intent(this, InventoryProductDetailActivity::class.java)
-            intent.putExtra("product_id", product._id)
-            startActivity(intent)
-        }
+        inventoryAdapter = InventoryAdapter(
+            productList = productsList,
+            onUpdateQuantity = { product, newQuantity ->
+                increaseInventory(product, newQuantity)
+            },
+            onItemClick = { product ->
+                // Navigate to Product Detail Activity
+                val intent = Intent(this, InventoryProductDetailActivity::class.java)
+                intent.putExtra("product_id", product._id)
+                startActivity(intent)
+            }
+        )
         inventoryRecyclerView.layoutManager = LinearLayoutManager(this)
         inventoryRecyclerView.adapter = inventoryAdapter
     }
 
-    private fun increaseInventory(product: Product, increaseAmount: Int) {
-        // Safely increase the quantity by the amount provided
-        val newQuantity = (product.quantity ?: 0) + increaseAmount  // Default to 0 if quantity is null
 
-        val updatedProduct = product.copy(quantity = newQuantity)
+    //updated new logic
+    private fun increaseInventory(product: Product, newQuantity: Int) {
+        val quantityUpdatePayload = mapOf("quantity" to newQuantity.toString())
 
         // Make the API call to update the product's quantity on the server
-        apiService.updateProductQuantity(updatedProduct._id, updatedProduct).enqueue(object : Callback<Product> {
-            override fun onResponse(call: Call<Product>, response: Response<Product>) {
+        apiService.updateProductQuantity(product._id, quantityUpdatePayload).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-                    // Update the local list with the updated product
-                    val index = productsList.indexOfFirst { it._id == updatedProduct._id }
+                    // Update the local product quantity to the new value
+                    product.quantity = newQuantity
+
+                    val index = productsList.indexOfFirst { it._id == product._id }
                     if (index != -1) {
-                        productsList[index] = updatedProduct
+                        productsList[index] = product
                         inventoryAdapter.notifyItemChanged(index)
-                        Toast.makeText(this@InventoryActivity, "Quantity increased successfully", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@InventoryActivity, "Quantity updated successfully", Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     Toast.makeText(this@InventoryActivity, "Failed to update quantity", Toast.LENGTH_SHORT).show()
                 }
             }
 
-            override fun onFailure(call: Call<Product>, t: Throwable) {
+            override fun onFailure(call: Call<Void>, t: Throwable) {
                 Toast.makeText(this@InventoryActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
+
+
 }

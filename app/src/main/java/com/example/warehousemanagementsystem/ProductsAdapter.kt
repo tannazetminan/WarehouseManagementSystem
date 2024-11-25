@@ -1,3 +1,4 @@
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -5,6 +6,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.warehousemanagementsystem.Product
 import com.example.warehousemanagementsystem.R
 
@@ -25,8 +27,12 @@ class ProductsAdapter(
             productName.text = product.prodName + ". id: "  +product._id
             productCategory.text = product.prodCategory ?: "Unknown"
             productPrice.text = "$${product.salePrice}"
-            Glide.with(itemView).load(product.image_url).into(productImage)
-
+            Glide.with(itemView)
+                .load(product.image_url)
+                .diskCacheStrategy(DiskCacheStrategy.NONE) // Disable disk caching temporarily
+                .error(R.drawable.placeholder)
+                .into(productImage)
+            Log.d("ProductAdapter", "Image URL: ${product.image_url}")
             addToCartButton.setOnClickListener { onAddToCart(product) }
             itemView.setOnClickListener { onItemClick(product) }
         }

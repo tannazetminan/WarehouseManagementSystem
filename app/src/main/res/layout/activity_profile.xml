@@ -79,5 +79,17 @@
             android:paddingHorizontal="32dp"
             android:text="Edit Profile"
             android:textColor="#FFFFFF" />
+
+        <Button
+            android:id="@+id/logoutButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/primaryColor"
+            android:paddingHorizontal="32dp"
+            android:text="Sign Out"
+            android:textColor="#FFFFFF" />
+
     </LinearLayout>
 </ScrollView>
