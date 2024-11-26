@@ -47,6 +47,10 @@ interface ApiService {
     ): Call<Void>
 
 
+    @GET("retrieve_single_product/{product_id}")
+    fun getSingleProductById(@Path("product_id") productId: String): Call<Product>
+
+
 }
 data class LoginResponse(
     val message: String,

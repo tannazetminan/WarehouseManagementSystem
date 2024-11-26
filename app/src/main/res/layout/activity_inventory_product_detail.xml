@@ -39,14 +39,14 @@
 
             <!-- Product Image -->
             <ImageView
-                android:id="@+id/productImage"
+                android:id="@+id/ipdProductImage"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:scaleType="centerCrop" />
 
             <!-- Product Name -->
             <TextView
-                android:id="@+id/productName"
+                android:id="@+id/ipdProductName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -55,9 +55,10 @@
                 android:textColor="@color/black"
                 android:text="Product Name" />
 
+
             <!-- Product Category -->
             <TextView
-                android:id="@+id/productCategory"
+                android:id="@+id/ipdProductCategory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -67,7 +68,7 @@
 
             <!-- Product Description -->
             <TextView
-                android:id="@+id/productDescription"
+                android:id="@+id/ipdProductDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -76,7 +77,7 @@
 
             <!-- Cost Price -->
             <TextView
-                android:id="@+id/productCostPrice"
+                android:id="@+id/ipdProductCostPrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -86,7 +87,7 @@
 
             <!-- Sale Price -->
             <TextView
-                android:id="@+id/productSalePrice"
+                android:id="@+id/ipdProductSalePrice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"

@@ -1,20 +1,80 @@
 package com.example.warehousemanagementsystem
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.bumptech.glide.Glide
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class InventoryProductDetailActivity : AppCompatActivity() {
+
+
+    private lateinit var apiService: ApiService
+    private var userId: String? = null
+
+    private var productId: String ? =null;
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_inventory_product_detail)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        val baseUrl = readBaseUrl(this)
+        apiService = RetrofitClient.getRetrofitInstance(baseUrl).create(ApiService::class.java)
+
+        val sharedPreferences = getSharedPreferences("UserPreferences", MODE_PRIVATE)
+        userId = sharedPreferences.getString("user_id", null)
+
+        productId = intent.getStringExtra("product_id")
+
+        if (productId != null) {
+            fetchProductDetails(productId!!)
         }
+        
+
+
+
     }
+
+
+    private fun fetchProductDetails(productId: String) {
+    apiService.getSingleProductById(productId).enqueue(object : Callback<Product> {
+        override fun onResponse(call: Call<Product>, response: Response<Product>) {
+            if (response.isSuccessful) {
+                val product = response.body()
+                product?.let {
+                    // Display product details
+                    findViewById<TextView>(R.id.ipdProductName).text = it.prodName
+                    findViewById<TextView>(R.id.ipdProductCategory).text = "Category: ${it.prodCategory ?: "N/A"}"
+                    findViewById<TextView>(R.id.ipdProductDescription).text = it.prodDescription ?: "No description available"
+                    findViewById<TextView>(R.id.ipdProductCostPrice).text = "Cost Price: $${it.costPrice}"
+                    findViewById<TextView>(R.id.ipdProductSalePrice).text = "Sale Price: $${it.salePrice}"
+
+                    // Load the image using Glide (if image_url is available)
+                    it.image_url?.let { imageUrl ->
+                        Glide.with(this@InventoryProductDetailActivity)
+                            .load(imageUrl)
+                            .into(findViewById(R.id.ipdProductImage)) // Assuming you have an ImageView with id 'ipdProductImage'
+                    }
+                }
+            } else {
+                // Handle error response
+                Toast.makeText(this@InventoryProductDetailActivity, "Error fetching product", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        override fun onFailure(call: Call<Product>, t: Throwable) {
+            // Handle failure (network issues, etc.)
+            Toast.makeText(this@InventoryProductDetailActivity, "Network failure", Toast.LENGTH_SHORT).show()
+        }
+    })
+    }
+
 }
