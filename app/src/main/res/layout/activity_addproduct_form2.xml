@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AddproductForm2Activity">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:weightSum="1">
+
+        <!-- Product Image Upload Section -->
+        <TextView
+            android:id="@+id/tvAddImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Upload Product Image"
+            android:textSize="18sp"
+            android:paddingBottom="8dp"
+            android:textColor="#000000"/>
+
+        <EditText
+            android:id="@+id/etAddPImageURL"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter product name"
+            android:inputType="text"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Product Details Section -->
+        <TextView
+            android:id="@+id/tvAddProductName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Product Name"
+            android:textSize="16sp"
+            android:textColor="#000000"
+            android:paddingBottom="4dp"/>
+
+        <EditText
+            android:id="@+id/etAddProductName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter product name"
+            android:inputType="text"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:id="@+id/tvAddProductDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Product Description"
+            android:textSize="16sp"
+            android:textColor="#000000"
+            android:paddingBottom="4dp"/>
+
+        <EditText
+            android:id="@+id/etAddProductDescription"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:hint="Enter product description"
+            android:inputType="textMultiLine"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"
+            android:gravity="top"/>
+        <TextView
+            android:id="@+id/tvAddProductCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Product Category"
+            android:textSize="16sp"
+            android:textColor="#000000"
+            android:paddingBottom="4dp"/>
+
+        <EditText
+            android:id="@+id/etAddProductCategory"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:hint="Enter product category"
+            android:inputType="text"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"
+            android:gravity="top"/>
+
+        <TextView
+            android:id="@+id/tvAddProductSalePrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Product Sale Price"
+            android:textSize="16sp"
+            android:textColor="#000000"
+            android:paddingBottom="4dp"/>
+
+        <EditText
+            android:id="@+id/etAddProductSalePrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter product sale price"
+            android:inputType="numberDecimal"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:id="@+id/tvAddProductCostPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Product Cost Price"
+            android:textSize="16sp"
+            android:textColor="#000000"
+            android:paddingBottom="4dp"/>
+
+        <EditText
+            android:id="@+id/etAddProductCostPrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter product cost price"
+            android:inputType="numberDecimal"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:id="@+id/tvAddProductQuantity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Product Quantity"
+            android:textSize="16sp"
+            android:textColor="#000000"
+            android:paddingBottom="4dp"/>
+
+        <EditText
+            android:id="@+id/etAddProductQuantity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter how many products in stock"
+            android:inputType="numberDecimal"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Submit Button -->
+        <Button
+            android:id="@+id/btnSubmitAddProduct"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Product"
+            android:layout_gravity="center"
+            android:backgroundTint="@color/primaryColor"
+            android:layout_marginBottom="16dp"/>
+    </LinearLayout>
+
+</ScrollView>

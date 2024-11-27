@@ -53,8 +53,9 @@ class InventoryActivity : AppCompatActivity() {
       //  fetchUserProfile()
 
         addProductButton.setOnClickListener {
-            val intent = Intent(this, AddProductFormActivity::class.java)
-            startActivity(intent)
+//            val intent = Intent(this, AddProductFormActivity::class.java)
+            val intent = Intent(this, AddproductForm2Activity::class.java)
+         startActivity(intent)
         }
     }
 

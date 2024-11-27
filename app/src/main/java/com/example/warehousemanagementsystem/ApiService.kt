@@ -50,6 +50,11 @@ interface ApiService {
     @GET("retrieve_single_product/{product_id}")
     fun getSingleProductById(@Path("product_id") productId: String): Call<Product>
 
+    @PUT("/update_single_product/{product_id}")
+    fun updateSingleProduct(
+        @Path("product_id") productId: String,
+        @Body product: Product
+    ):Call<Void>
 
 }
 data class LoginResponse(

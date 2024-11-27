@@ -2,6 +2,7 @@ package com.example.warehousemanagementsystem
 
 import android.content.Intent
 import android.os.Bundle
+import android.provider.MediaStore
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -20,8 +21,12 @@ class InventoryProductDetailActivity : AppCompatActivity() {
 
     private lateinit var apiService: ApiService
     private var userId: String? = null
+    private lateinit var btnGoToEditProduct: Button
+    private lateinit var btnDeleteProduct: Button
+
 
     private var productId: String ? =null;
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -37,7 +42,18 @@ class InventoryProductDetailActivity : AppCompatActivity() {
         if (productId != null) {
             fetchProductDetails(productId!!)
         }
-        
+
+        btnDeleteProduct =findViewById(R.id.btnDeleteProduct);
+        btnGoToEditProduct = findViewById(R.id.btnGoToEditProduct);
+
+        btnGoToEditProduct.setOnClickListener {
+          //put product id in intent and pass it to new activity. start new activity
+            val intent = Intent(this, InventoryProductEditActivity::class.java)
+            intent.putExtra("product_id", productId)
+            startActivity(intent)
+
+        }
+
 
 
 

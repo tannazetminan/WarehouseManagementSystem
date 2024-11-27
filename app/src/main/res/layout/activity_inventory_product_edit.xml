@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".InventoryProductEditActivity"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:textSize="24sp"
+        android:text="Edit Product"
+        android:textStyle="bold"
+        android:textColor="@color/primaryColor"
+      android:gravity="center"/>
+    <!-- Product Image -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="8dp">
+
+
+    <TextView
+        android:id="@+id/txvIpEditImage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Image url: "
+         />
+
+        <EditText
+            android:id="@+id/etIpEditImage"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="3"
+            android:hint="Enter new url"
+            android:inputType="text" />
+
+    </LinearLayout>
+
+    <!-- Product Name -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="8dp">
+
+        <TextView
+            android:id="@+id/txvIpEditName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Product Name "
+            />
+
+        <EditText
+            android:id="@+id/etIpEditName"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="3"
+            android:hint="Enter new product name"
+            android:inputType="text" />
+
+    </LinearLayout>
+
+
+    <!-- Product Category -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="8dp">
+
+
+        <TextView
+            android:id="@+id/txvIpEditCategory"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Category: "
+            />
+        <EditText
+            android:id="@+id/etIpEditCategory"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="3"
+            android:hint="Enter new category"
+            />
+
+    </LinearLayout>
+
+    <!-- Product Description -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="8dp">
+
+
+        <TextView
+            android:id="@+id/txvIpEditDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Description: "
+            />
+        <EditText
+            android:id="@+id/etIpEditDescription"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="3"
+            android:hint="Enter new description"
+            />
+
+    </LinearLayout>
+
+    <!-- Cost Price -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="8dp">
+
+
+        <TextView
+            android:id="@+id/txvIpEditCostPrice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Cost Price: "
+            />
+        <EditText
+            android:id="@+id/etIpEditCostPrice"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="3"
+            android:hint="Enter new Cost Price"
+            />
+
+    </LinearLayout>
+
+    <!-- Sale Price -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_margin="8dp">
+
+
+        <TextView
+            android:id="@+id/txvIpEditSalePrice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Sale Price: "
+            />
+        <EditText
+            android:id="@+id/etIpEditSalePrice"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="3"
+            android:hint="Enter new Sale Price"
+            />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnEditProduct"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Edit"
+        android:backgroundTint="@color/primaryColor"/>
+
+
+
+
+</LinearLayout>
