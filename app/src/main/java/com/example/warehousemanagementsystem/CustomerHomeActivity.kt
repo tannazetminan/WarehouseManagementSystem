@@ -154,6 +154,19 @@ class CustomerHomeActivity : AppCompatActivity() {
         productsAdapter.updateList(filteredList)
     }
 
+    private fun setupRecyclerView1() {
+        productsAdapter = ProductsAdapter(productsList, onAddToCart = { product ->
+            addToCart(product)
+        }) { product ->
+            // Navigate to Product Detail Activity
+            val intent = Intent(this, ProductDetailActivity::class.java)
+            intent.putExtra("product_id", product._id)
+            startActivity(intent)
+        }
+        productsRecyclerView.layoutManager = LinearLayoutManager(this)
+        productsRecyclerView.adapter = productsAdapter
+    }
+
     private fun setupRecyclerView() {
         productsAdapter = ProductsAdapter(productsList, onAddToCart = { product ->
             addToCart(product)
@@ -166,6 +179,7 @@ class CustomerHomeActivity : AppCompatActivity() {
         productsRecyclerView.layoutManager = LinearLayoutManager(this)
         productsRecyclerView.adapter = productsAdapter
     }
+
 
     private fun addToCart(product: Product) {
         userId?.let { userId ->
