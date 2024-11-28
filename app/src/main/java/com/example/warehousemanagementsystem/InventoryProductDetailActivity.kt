@@ -55,8 +55,42 @@ class InventoryProductDetailActivity : AppCompatActivity() {
         }
 
 
+       btnDeleteProduct.setOnClickListener{
 
+           //have user verify they want to delete the product
+           val dialogBuilder = AlertDialog.Builder(this)
+           dialogBuilder.setMessage("Are you sure you want to delete this product?")
+               .setCancelable(false)
+               .setPositiveButton("Yes") { dialog, id ->
+                   deleteSingleProduct(productId!!)
+               }
+               .setNegativeButton("No") { dialog, id ->
+                   dialog.cancel()
+               }
 
+           val alert = dialogBuilder.create()
+           alert.show()
+
+       }
+
+    }
+
+    private fun deleteSingleProduct(productId: String) {
+        apiService.deleteSingleProduct(productId).enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Toast.makeText(this@InventoryProductDetailActivity, "Product deleted successfully", Toast.LENGTH_SHORT).show()
+                    // Optionally, go back to previous screen or refresh product list
+                    finish() // Close the activity
+                } else {
+                    Toast.makeText(this@InventoryProductDetailActivity, "Failed to delete product", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Toast.makeText(this@InventoryProductDetailActivity, "Network failure", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
 
