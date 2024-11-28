@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_marginBottom="8dp">
+
+        <!-- Transaction ID -->
+        <TextView
+            android:id="@+id/item_transactionId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Transaction ID: #000"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+
+
+        <!-- Transaction Date -->
+        <TextView
+            android:id="@+id/item_transactionDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date: 2024-11-28"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp" />
+
+        <!-- Transaction Total -->
+        <TextView
+            android:id="@+id/item_transactionTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total: $500.00"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

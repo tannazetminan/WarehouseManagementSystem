@@ -20,7 +20,7 @@ interface ApiService {
     @POST("create_product")
     fun createProduct(@Body product: Product): Call<Void>
 
-    // Getting all produtcs
+    // Getting all products
     @GET("retrieve_all_products")
     fun getAllProducts(): Call<List<Product>>
 
@@ -58,6 +58,16 @@ interface ApiService {
         @Path("product_id") productId: String,
         @Body product: Product
     ):Call<Void>
+
+    @GET("retrieve_all_transactions")
+    fun getAllTransactions(): Call<List<Transaction>>
+
+    @GET("retrieve_transaction_by_id/{trans_id}")
+    fun getTransactionById(@Path("trans_id") transId: String): Call<Transaction>
+
+    // Get user by user_id for transaction
+    @GET("retrieve_user_by_id/{user_id}")
+    fun getUserById(@Path("user_id") userId: String): Call<User>
 
 }
 data class LoginResponse(

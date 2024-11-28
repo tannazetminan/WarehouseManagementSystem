@@ -50,6 +50,13 @@
 #
 # 14. To remove an item from the cart
 #   curl -X Post http://localhost:8888/cart/<user_id>/<product_id>
+#
+# 15. To get all transactions
+# curl -X GET http://localhost:8888/retrieve_all_transactions
+#
+# 16. to get transaction by id
+# curl -X GET http://localhost:8888/retrieve_transaction_by_id/<transaction_id>
+#
 
 
 from flask import Flask, jsonify, request, send_from_directory
@@ -316,9 +323,6 @@ def update_single_product(product_id):
         return jsonify({"error": f"Invalid ID format: {str(e)}"}), 400
 
 
-
-
-# Endpoint to update product quantity
 # Endpoint to update product quantity
 @app.route('/update_productQuantity/<product_id>', methods=['PUT'])
 def update_product_quantity(product_id):
@@ -408,6 +412,30 @@ def create_transaction():
     transactions_collection.insert_one(transaction_data)
 
     return jsonify({"message": "Transaction completed successfully"}), 201
+
+
+# Endpoint to retrieve all transactions
+@app.route('/retrieve_all_transactions', methods=['GET'])
+def retrieve_all_transactions():
+    transactions = transactions_collection.find()
+    transactions_list = []
+
+    for transaction in transactions:
+        transaction['_id'] = str(transaction['_id'])  # Convert ObjectId to string
+        transactions_list.append(transaction)
+
+    return jsonify(transactions_list), 200
+
+# Endpoint to retrieve a specific transaction by ID
+@app.route('/retrieve_transaction_by_id/<transaction_id>', methods=['GET'])
+def retrieve_transaction_by_id(transaction_id):
+    transaction = transactions_collection.find_one({"_id": ObjectId(transaction_id)})
+
+    if transaction:
+        transaction['_id'] = str(transaction['_id'])
+        return jsonify(transaction), 200
+    else:
+        return jsonify({"error": "Transaction not found"}), 404
 
 
 # Endpoint to add a product to the cart

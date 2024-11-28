@@ -1,10 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ReportsActivity">
+    tools:context=".ReportsActivity"
+    android:padding="16dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:id="@+id/txvTransactionsPageHeading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Transactions"
+            android:textSize="24sp"
+            android:textColor="@color/primaryColor"
+            android:textStyle="bold"
+            android:gravity="center"
+            />
+
+        <Spinner
+            android:id="@+id/transactionsDateSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="48dp" />
+
+        <!-- Button to filter transactions -->
+        <Button
+            android:id="@+id/filterTransactionsButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Filter"
+            android:backgroundTint="@color/primaryColor"/>
+
+        <!-- RecyclerView to display transactions -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/transactionRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <TextView
+            android:id="@+id/txvTransactionReportSummaryLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Transactions Summary"
+            android:textSize="24sp"
+            android:textColor="@color/primaryColor"
+            android:textStyle="bold"
+            android:gravity="center"
+            />
+        <TextView
+            android:id="@+id/txvTransactionReportSummary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Transactions"
+
+            />
+    </LinearLayout>
+
+</ScrollView>

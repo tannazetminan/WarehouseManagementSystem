@@ -4,7 +4,7 @@ package com.example.warehousemanagementsystem
 data class Transaction(
     val transId: Int,
     //changed this to User type
-    val user: User, //refers to the customer or admin user is who performed the transaction
+    var user: User, //refers to the customer or admin user is who performed the transaction
     val transDateAndTime: String, //date of the transaction
     //val transTime: String, //time of transaction
     var products: Array<Product> = emptyArray(),

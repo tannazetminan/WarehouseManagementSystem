@@ -1,38 +1,50 @@
 <!-- File: res/layout/activity_main.xml -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView
-        android:id="@+id/textView"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Inventory"
-        android:textSize="24sp"/>
+        android:orientation="vertical"
+       >
 
-    <Spinner
-        android:id="@+id/spinnerInventoryCategories"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Inventory"
+            android:textSize="24sp"
+            android:textColor="@color/primaryColor"
+            android:textStyle="bold"
+            android:gravity="center"/>
 
-        />
+        <Spinner
+            android:id="@+id/spinnerInventoryCategories"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/inventoryRecyclerView"
-        android:layout_marginTop="12dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+            />
 
-    <Button
-        android:id="@+id/btnAddNewProduct"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/txtBtnAddNewProduct"
-        android:layout_margin="8dp"
-        android:backgroundTint="@color/primaryColor"
-        android:textColor="#FFFFFF"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/inventoryRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp" />
 
-</LinearLayout>
+        <Button
+            android:id="@+id/btnAddNewProduct"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:backgroundTint="@color/primaryColor"
+            android:text="@string/txtBtnAddNewProduct"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
+
+
+</ScrollView>

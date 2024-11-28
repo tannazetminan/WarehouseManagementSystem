@@ -33,6 +33,7 @@ class AdminHomeActivity : AppCompatActivity() {
 
 
         val btnGoToInventory: Button = findViewById(R.id.btnGoToInventory)
+        val btnGoToReports: Button = findViewById(R.id.btnGoToReports)
 
         val baseUrl = readBaseUrl(this)
         apiService = RetrofitClient.getRetrofitInstance(baseUrl).create(ApiService::class.java)
