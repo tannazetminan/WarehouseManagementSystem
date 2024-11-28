@@ -197,6 +197,7 @@ class CustomerHomeActivity : AppCompatActivity() {
                 }
             })
         }
+
     }
 
     private fun fetchUserProfile() {

@@ -59,6 +59,8 @@ class AddproductForm2Activity : AppCompatActivity() {
         btnSubmitAddProduct.setOnClickListener {
             if (validateForm()) {
                 createProduct()
+                val intent = Intent(this, InventoryActivity::class.java)
+                startActivity(intent)
             }
         }
 

@@ -46,5 +46,10 @@ class AdminHomeActivity : AppCompatActivity() {
             val intent = Intent(this, InventoryActivity::class.java)
             startActivity(intent)
         }
+
+        btnGoToReports.setOnClickListener {
+            val intent = Intent(this, ReportsActivity::class.java)
+            startActivity(intent)
+        }
     }
 }
