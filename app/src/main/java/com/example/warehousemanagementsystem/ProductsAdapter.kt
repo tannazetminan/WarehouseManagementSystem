@@ -10,6 +10,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.warehousemanagementsystem.Product
 import com.example.warehousemanagementsystem.R
 
+
 class ProductsAdapter(
     private var productList: List<Product>,
     private val onAddToCart: (Product) -> Unit,
@@ -27,12 +28,27 @@ class ProductsAdapter(
             productName.text = product.prodName
             productCategory.text = product.prodCategory ?: "Unknown"
             productPrice.text = "$${product.salePrice}"
+
+            // Get the image URL, removing the base URL before "https://"
+            val imageUrl = product.image_url?.let {
+                // Find where the URL starts with "https://"
+                val startIndex = it.indexOf("https://")
+                if (startIndex != -1) {
+                    it.substring(startIndex) // Keep everything after "https://"
+                } else {
+                    it // If no "https://" is found, use the original URL
+                }
+            }
+
+            // Load the image URL using Glide
             Glide.with(itemView)
-                .load(product.image_url)
+                .load(imageUrl)
                 .diskCacheStrategy(DiskCacheStrategy.NONE) // Disable disk caching temporarily
                 .error(R.drawable.placeholder)
                 .into(productImage)
-            Log.d("ProductAdapter", "Image URL: ${product.image_url}")
+
+            Log.d("ProductAdapter", "Image URL: $imageUrl")
+
             addToCartButton.setOnClickListener { onAddToCart(product) }
             itemView.setOnClickListener { onItemClick(product) }
         }

@@ -7,6 +7,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -66,11 +67,27 @@ class ProductDetailActivity : AppCompatActivity() {
                         productDescription.text = it.prodDescription ?: "No description available"
                         productCategory.text = it.prodCategory ?: "Unknown"
                         productPrice.text = "$${it.salePrice}"
+//                        Glide.with(this@ProductDetailActivity)
+//                            .load(it.image_url)
+//                            .error(R.drawable.placeholder)
+//                            .into(productImage)
+                        // Get the image URL, removing the base URL before "https://"
+                        val imageUrl = product.image_url?.let {
+                            // Find where the URL starts with "https://"
+                            val startIndex = it.indexOf("https://")
+                            if (startIndex != -1) {
+                                it.substring(startIndex) // Keep everything after "https://"
+                            } else {
+                                it // If no "https://" is found, use the original URL
+                            }
+                        }
+
+                        // Load the image URL using Glide
                         Glide.with(this@ProductDetailActivity)
-                            .load(it.image_url)
+                            .load(imageUrl)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE) // Disable disk caching temporarily
                             .error(R.drawable.placeholder)
                             .into(productImage)
-
 
                     }
                 } else {
