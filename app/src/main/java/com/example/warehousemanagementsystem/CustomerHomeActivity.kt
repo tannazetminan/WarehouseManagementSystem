@@ -154,19 +154,6 @@ class CustomerHomeActivity : AppCompatActivity() {
         productsAdapter.updateList(filteredList)
     }
 
-    private fun setupRecyclerView1() {
-        productsAdapter = ProductsAdapter(productsList, onAddToCart = { product ->
-            addToCart(product)
-        }) { product ->
-            // Navigate to Product Detail Activity
-            val intent = Intent(this, ProductDetailActivity::class.java)
-            intent.putExtra("product_id", product._id)
-            startActivity(intent)
-        }
-        productsRecyclerView.layoutManager = LinearLayoutManager(this)
-        productsRecyclerView.adapter = productsAdapter
-    }
-
     private fun setupRecyclerView() {
         productsAdapter = ProductsAdapter(productsList, onAddToCart = { product ->
             addToCart(product)
@@ -183,21 +170,33 @@ class CustomerHomeActivity : AppCompatActivity() {
 
     private fun addToCart(product: Product) {
         userId?.let { userId ->
-            apiService.addCartItem(userId, product).enqueue(object : Callback<Void> {
+            val productIdMap = mapOf("productId" to product._id) // Send only the product ID
+            apiService.addCartItem(userId, productIdMap).enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
                     if (response.isSuccessful) {
-                        Toast.makeText(this@CustomerHomeActivity, "${product.prodName} added to cart", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@CustomerHomeActivity,
+                            "${product.prodName} added to cart",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     } else {
-                        Toast.makeText(this@CustomerHomeActivity, "Failed to add item to cart", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@CustomerHomeActivity,
+                            "Failed to add item to cart",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
 
                 override fun onFailure(call: Call<Void>, t: Throwable) {
-                    Toast.makeText(this@CustomerHomeActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this@CustomerHomeActivity,
+                        "Error: ${t.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             })
         }
-
     }
 
     private fun fetchUserProfile() {

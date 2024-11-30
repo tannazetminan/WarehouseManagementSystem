@@ -30,14 +30,18 @@ interface ApiService {
     @PUT("user/{user_id}")
     fun updateUserProfile(@Path("user_id") userId: String, @Body profile: UserProfile): Call<Void>
 
-    @GET("cart/{user_id}")
-    fun getCartItems(@Path("user_id") userId: String): Call<List<Product>>
+    @POST("cart/{userId}/add")
+    fun addCartItem(
+        @Path("userId") userId: String,
+        @Body productIdMap: Map<String, String>
+    ): Call<Void>
 
-    @POST("cart/{user_id}")
-    fun addCartItem(@Path("user_id") userId: String, @Body product: Product): Call<Void>
+    @GET("/cart/{userId}")
+    fun getCartItems(@Path("userId") userId: String): Call<List<Product>>
 
-    @DELETE("cart/{user_id}/{product_id}")
-    fun removeCartItem(@Path("user_id") userId: String, @Path("product_id") productId: String): Call<Void>
+
+    @DELETE("/cart/{userId}/{productId}")
+    fun removeCartItem(@Path("userId") userId: String, @Path("productId") productId: String): Call<Void>
 
     @DELETE("delete_single_product/{product_id}")
     fun deleteSingleProduct(@Path("product_id") productId:String): Call<Void>

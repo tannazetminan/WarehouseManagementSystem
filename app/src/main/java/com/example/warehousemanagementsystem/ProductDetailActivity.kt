@@ -70,6 +70,8 @@ class ProductDetailActivity : AppCompatActivity() {
                             .load(it.image_url)
                             .error(R.drawable.placeholder)
                             .into(productImage)
+
+
                     }
                 } else {
                     Toast.makeText(this@ProductDetailActivity, "Failed to load product details", Toast.LENGTH_SHORT).show()

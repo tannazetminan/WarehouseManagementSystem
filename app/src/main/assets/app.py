@@ -96,7 +96,7 @@ db = client.warehouse_management
 users_collection = db.users
 products_collection = db.products
 transactions_collection = db.transactions
-
+cart_collection = db.cart
 
 # Endpoint to register
 @app.route('/register', methods=['POST'])
@@ -439,51 +439,75 @@ def retrieve_transaction_by_id(transaction_id):
 
 
 # Endpoint to add a product to the cart
-@app.route('/cart/<user_id>', methods=['POST'])
+from bson.objectid import ObjectId  # Import this module for ObjectId conversion
+@app.route("/cart/<user_id>/add", methods=["POST"])
 def add_to_cart(user_id):
-    data = request.get_json()
-    product_id = data['product_id']
+    data = request.json
+    product_id = data.get("productId")
 
-    user = users_collection.find_one({"_id": ObjectId(user_id)})
-    if not user:
-        return jsonify({"error": "User not found"}), 404
+    if not product_id:
+        return jsonify({"error": "Product ID is required"}), 400
 
-    # Add the product to the user's cart
-    cart = user.get("cart", [])
-    if product_id not in cart:
-        cart.append(product_id)
-        users_collection.update_one({"_id": ObjectId(user_id)}, {"$set": {"cart": cart}})
-        return jsonify({"message": "Product added to cart"}), 200
-    else:
-        return jsonify({"message": "Product is already in cart"}), 400
+    try:
+        # Convert the product_id to ObjectId
+        product_object_id = ObjectId(product_id)
+    except Exception as e:
+        return jsonify({"error": "Invalid Product ID format"}), 400
 
-# Endpoint to get the user's cart
-@app.route('/cart/<user_id>', methods=['GET'])
-def get_cart(user_id):
-    user = users_collection.find_one({"_id": ObjectId(user_id)})
-    if user:
-        cart_product_ids = user.get("cart", [])
-        products = products_collection.find({"_id": {"$in": [ObjectId(prod_id) for prod_id in cart_product_ids]}})
-        product_list = [product for product in products]
-        return jsonify(product_list), 200
-    else:
-        return jsonify({"error": "User not found"}), 404
+    # Check if the product exists in the database
+    product = products_collection.find_one({"_id": product_object_id})
+    if not product:
+        return jsonify({"error": "Product not found"}), 404
 
-# Endpoint to remove a product from the cart
-@app.route('/cart/<user_id>/<product_id>', methods=['DELETE'])
-def remove_from_cart(user_id, product_id):
-    user = users_collection.find_one({"_id": ObjectId(user_id)})
-    if not user:
-        return jsonify({"error": "User not found"}), 404
+    # Check if the product is already in the user's cart
+    existing_item = cart_collection.find_one({"user_id": user_id, "product_id": product_id})
+    if existing_item:
+        return jsonify({"message": "Product already in cart"}), 200
 
-    cart = user.get("cart", [])
-    if product_id in cart:
-        cart.remove(product_id)
-        users_collection.update_one({"_id": ObjectId(user_id)}, {"$set": {"cart": cart}})
-        return jsonify({"message": "Product removed from cart"}), 200
-    else:
-        return jsonify({"error": "Product not found in cart"}), 404
+    # Add product to the cart
+    cart_item = {
+        "user_id": user_id,
+        "product_id": product_id
+    }
+    cart_collection.insert_one(cart_item)
 
+    return jsonify({"message": "Product added to cart"}), 201
+
+
+# Endpoint to get all items in the cart
+@app.route("/cart/<user_id>", methods=["GET"])
+def get_cart_items(user_id):
+    cart_items = list(cart_collection.find({"user_id": user_id}))
+    if not cart_items:
+        return jsonify([]), 200
+
+    # Convert product_id strings to ObjectId
+    product_ids = [ObjectId(item["product_id"]) for item in cart_items]
+
+    # Retrieve product details for each product in the cart
+    products = list(products_collection.find({"_id": {"$in": product_ids}}))
+
+    # Convert MongoDB objects to JSON-friendly format
+    for product in products:
+        product["_id"] = str(product["_id"])
+
+    return jsonify(products), 200
+
+
+# Endpoint to remov one item from the cart
+@app.route("/cart/<user_id>/<product_id>", methods=["DELETE"])
+def clear_cart_item(user_id, product_id):
+    result = cart_collection.delete_one({"user_id": user_id, "product_id": product_id})
+    if result.deleted_count == 0:
+        return jsonify({"error": "Item not found in cart"}), 404
+    return jsonify({"message": "Item removed from cart"}), 200
+
+
+# Endpoint to clear the cart
+@app.route("/cart/<user_id>/clear", methods=["DELETE"])
+def clear_cart(user_id):
+    result = cart_collection.delete_many({"user_id": user_id})
+    return jsonify({"message": f"Deleted {result.deleted_count} items from the cart"}), 200
 
 
 
