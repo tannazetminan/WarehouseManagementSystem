@@ -10,7 +10,8 @@
         android:id="@+id/txvWelcomeAdmin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="welcome admin"
+        android:text="@string/txtWelcomeAdmin"
+        android:layout_gravity="center"
         android:textSize="24sp"/>
 
     <LinearLayout
@@ -54,9 +55,20 @@
             />
 
     </LinearLayout>
+    <TextView
+        android:id="@+id/chart_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Top 5 Products"
+        android:textSize="18sp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="6dp"
+        android:layout_centerHorizontal="true"
+        android:textColor="@android:color/black"
+        android:layout_gravity="center"/>
 
-    <com.anychart.AnyChartView
-        android:id="@+id/any_chart_view"
+    <com.github.mikephil.charting.charts.BarChart
+        android:id="@+id/chart_view"
         android:layout_width="match_parent"
-        android:layout_height="400dp" />
+        android:layout_height="match_parent"/>
 </LinearLayout>

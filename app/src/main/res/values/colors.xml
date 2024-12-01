@@ -3,4 +3,8 @@
     <color name="black">#FF000000</color>
     <color name="white">#ffffff</color>
     <color name="primaryColor">#3B608B</color>
+    <!-- Colors for bar chart -->
+    <color name="green">#00FF00</color> <!-- Highest value -->
+    <color name="yellow">#FFFF00</color> <!-- Medium value -->
+    <color name="red">#FF0000</color> <!-- Lowest value -->
 </resources>

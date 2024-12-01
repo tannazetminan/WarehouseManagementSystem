@@ -3,22 +3,19 @@ package com.example.warehousemanagementsystem
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
-import android.widget.EditText
-import android.widget.Spinner
-import android.widget.TextView
 import android.widget.Toast
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.anychart.AnyChart
-import com.anychart.AnyChartView
-//import com.anychart.charts.Pie
-//import com.anychart.charts.Bar
-import com.anychart.chart.common.dataentry.ValueDataEntry
 import android.util.Log
-import com.anychart.chart.common.dataentry.DataEntry
+import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 
 class AdminHomeActivity : AppCompatActivity() {
 
@@ -27,14 +24,14 @@ class AdminHomeActivity : AppCompatActivity() {
     private lateinit var topTenRecyclerView: RecyclerView
     private lateinit var apiService: ApiService
     private var userId: String? = null
-    private lateinit var anyChartView: AnyChartView
+    private lateinit var chartView: BarChart
     private var productList = mutableMapOf<String, Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin_home)
 
-        anyChartView = findViewById(R.id.any_chart_view)
+        chartView = findViewById(R.id.chart_view)
 
         val btnGoToInventory: Button = findViewById(R.id.btnGoToInventory)
         val btnGoToReports: Button = findViewById(R.id.btnGoToReports)
@@ -46,7 +43,15 @@ class AdminHomeActivity : AppCompatActivity() {
         val sharedPreferences = getSharedPreferences("UserPreferences", MODE_PRIVATE)
         userId = sharedPreferences.getString("user_id", null)
 
-        fetchTopProducts()
+        fetchTopProducts()  // Fetch products from API
+
+//        // Use a background thread for heavy work, e.g., network call
+//        Thread {
+//            fetchTopProducts()  // Fetch products from API
+//            runOnUiThread {
+//                displayChart()  // Ensure UI updates are done on the main thread
+//            }
+//        }.start()
 
         // Navigate to Users Activity
         btnGoToUsers.setOnClickListener {
@@ -108,60 +113,93 @@ class AdminHomeActivity : AppCompatActivity() {
             Log.d("AdminHomeActivity", "Product: ${it.key}, Quantity: ${it.value}")
         }
 
-        // Sorting and limiting to top 10 products
+        // Sorting and limiting to top 5 products
         productList = productList.entries
             .sortedByDescending { it.value }
-            .take(10)
+            .take(5)
             .map { it.key to it.value }
             .toMap()
             .toMutableMap()
     }
 
     private fun displayChart() {
-//        val data = mutableListOf<DataEntry>()
-//        data.add(ValueDataEntry("Product A", 50))
-//        data.add(ValueDataEntry("Product B", 30))
-//        data.add(ValueDataEntry("Product C", 70))
-//        data.add(ValueDataEntry("Product D", 90))
-//        data.add(ValueDataEntry("Product E", 20))
-//
-//        // Log the data to check if it's being created correctly
-//        Log.d("AdminHomeActivity", "Data for chart: $data")
-//
-//        val chart = AnyChart.bar()
-//        chart.data(data)
-//
-//        // Ensure the chart is set to the view
-//        anyChartView.setChart(chart)
-//
-//        // Log to confirm the chart is set
-//        Log.d("AdminHomeActivity", "Chart set to AnyChartView")
+        // Log the productList before creating the chart
+        Log.d("AdminHomeActivity", "productList: $productList")
 
-
-        val bar = AnyChart.bar()
-
-        // Use ValueDataEntry to represent the data
-        val data = productList.map {
-            ValueDataEntry(it.key, it.value)
+        // Create BarEntry list for Y-axis values
+        val entries = productList.entries.mapIndexed { index, entry ->
+            val barEntry = BarEntry(index.toFloat(), entry.value.toFloat())
+            Log.d("AdminHomeActivity", "BarEntry - Index: $index, Value: ${entry.value}")
+            barEntry
         }
 
-        // Log the data size and first few entries
-        Log.d("AdminHomeActivity", "Data size for chart: ${data.size}")
-        if (data.isNotEmpty()) {
-            Log.d("AdminHomeActivity", "First data entry value: ${data.first().getValue("value")}")
+        // Set up labels for X-axis
+        val labels = productList.keys.toList()
+        Log.d("AdminHomeActivity", "Labels for X-axis: $labels")
+
+        // Determine the range of values for color scaling
+        val minValue = productList.values.minOrNull()?.toFloat() ?: 0f
+        val maxValue = productList.values.maxOrNull()?.toFloat() ?: 1f // Avoid division by zero
+        Log.d("AdminHomeActivity", "Value range: Min=$minValue, Max=$maxValue")
+        // Prepare the dataset
+        val dataSet = BarDataSet(entries, "Quantity Sold").apply {
+            // Set colors dynamically based on the value
+            colors = entries.map { entry ->
+                getColorForValue(entry.y, minValue, maxValue)
+            }
+            valueTextSize = 14f // Customize text size
+            Log.d("AdminHomeActivity", "BarDataSet created with ${entries.size} entries.")
         }
 
-        // Check if the data is not empty before setting the chart
-        if (data.isNotEmpty()) {
-            bar.data(data)
-            bar.title("Top 10 Products Sold")
-            bar.labels().position("inside")
-            Log.d("AdminHomeActivity", "First data entry value again: ${data.first().getValue("value")}")
-            //anyChartView.clear()
-            anyChartView.setChart(bar)
-            Log.d("AdminHomeActivity", "Chart View Width: ${anyChartView.width}, Height: ${anyChartView.height}")
-        } else {
-            Toast.makeText(this@AdminHomeActivity, "No data available for chart", Toast.LENGTH_SHORT).show()
+//        // Prepare the dataset
+//        val dataSet = BarDataSet(entries, "Quantity Sold").apply {
+//            color = resources.getColor(R.color.primaryColor, null) // Customize color
+//            valueTextSize = 14f // Customize text size
+//            Log.d("AdminHomeActivity", "BarDataSet created with ${entries.size} entries.")
+//        }
+
+        // Attach data to the BarData
+        val barData = BarData(dataSet).apply {
+            barWidth = 0.9f // Optional: adjust bar width
+            Log.d("AdminHomeActivity", "BarData created with bar width: $barWidth")
+        }
+
+        // Configure the BarChart
+        chartView.apply {
+            data = barData
+            description.isEnabled = false // Disable description label
+            setFitBars(true) // Adjust bars to fit
+
+            // Customize X-axis
+            xAxis.apply {
+                valueFormatter = IndexAxisValueFormatter(labels)
+                position = XAxis.XAxisPosition.TOP_INSIDE
+                granularity = 1f
+                isGranularityEnabled = true
+                setLabelRotationAngle(90f) // Rotate labels to vertical
+                yOffset = 100f // Adjust the Y offset to move labels lower (increase the value as needed)
+                Log.d("AdminHomeActivity", "X-axis configured with granularity: $granularity and labels: $labels")
+            }
+
+            // Customize Y-axis
+            axisLeft.axisMinimum = 0f // Y-axis starts at 0
+            axisRight.isEnabled = false // Disable right Y-axis
+            Log.d("AdminHomeActivity", "Y-axis configured with minimum: ${axisLeft.axisMinimum}")
+
+            // Refresh the chart
+            invalidate()
+            Log.d("AdminHomeActivity", "BarChart refreshed and displayed.")
+        }
+    }
+    /**
+     * Generate a color based on the value's position in the range [minValue, maxValue].
+     */
+    private fun getColorForValue(value: Float, minValue: Float, maxValue: Float): Int {
+        val ratio = (value - minValue) / (maxValue - minValue) // Normalize value between 0 and 1
+        return when {
+            ratio >= 0.75 -> resources.getColor(R.color.green, null) // High value (Green)
+            ratio >= 0.5 -> resources.getColor(R.color.yellow, null) // Medium value (Yellow)
+            else -> resources.getColor(R.color.red, null) // Low value (Red)
         }
     }
 }
