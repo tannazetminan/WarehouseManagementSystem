@@ -19,6 +19,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.time.temporal.WeekFields
 
 class ReportsActivity : AppCompatActivity() {
 
@@ -107,9 +108,10 @@ class ReportsActivity : AppCompatActivity() {
         }
     }
 
-    //filter in not working
+
     private fun filterTransactionsByDate(selectedDate: String) {
         Log.d("ReportsActivity", "Filtering transactions for: $selectedDate")
+
         val filteredTransactions = when (selectedDate) {
             "Last Week" -> transactionList.filter {
                 val parsedDate = it.transDate.toLocalDate()
@@ -119,29 +121,29 @@ class ReportsActivity : AppCompatActivity() {
             "Last Month" -> transactionList.filter {
                 it.transDate.toLocalDate()?.isLastMonth() == true
             }
-            //            //Commented this for now, as it's not super necessary
-////            "Custom Date" -> {
-////                // Implement custom date filtering logic (open date picker or other mechanism)
-////                transactionList
-////            }
             "This Week" -> transactionList.filter {
                 Log.d("ReportsActivity", "This week, transactionDate is ${it.transDate}")
                 it.transDate.toLocalDate()?.isThisWeek() == true
             }
-            else -> transactionList
+            else -> transactionList  // "All Time" or other
         }
-        Log.d("ReportsActivity", "Filtered Transactions: ${filteredTransactions}")
+
+        Log.d("ReportsActivity", "Filtered Transactions: $filteredTransactions")
 
         // Update RecyclerView with filtered transactions
         transactionAdapter.updateList(filteredTransactions)
+//
+        val report = generateFinancialReport(filteredTransactions)
+        transactionReportTextView.text = report
+        transactionReportTextView.visibility = if (filteredTransactions.isNotEmpty()) View.VISIBLE else View.GONE
     }
 
     private fun generateFinancialReport(transactionsList: List<Transaction>): String {
-        val totalSales = calculateTotalSales(transactionList)
-        val totalProfit = calculateTotalProfit(transactionList)
-        val transactionCount = transactionList.size
+        val totalSales = calculateTotalSales(transactionsList)
+        val totalProfit = calculateTotalProfit(transactionsList)
+        val transactionCount = transactionsList.size
         val avgTransactionValue = if (transactionCount > 0) totalSales/transactionCount else 0.0
-        val mostSoldProducts = calculateMostSoldProducts(transactionList)
+        val mostSoldProducts = calculateMostSoldProducts(transactionsList)
 
         return """
             Financial Report:
@@ -180,28 +182,32 @@ class ReportsActivity : AppCompatActivity() {
         }
     }
     fun String.toLocalDate(): LocalDate? {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         return try {
-            LocalDate.parse(this, DateTimeFormatter.ISO_DATE) // Assuming format is "yyyy-MM-dd"
+            LocalDate.parse(this, formatter)
         } catch (e: Exception) {
             null
         }
+
     }
     fun LocalDate.isThisWeek(): Boolean {
-        val today = LocalDate.now()
-        val startOfWeek = today.minusDays(today.dayOfWeek.value.toLong() - 1) // Monday
-        val endOfWeek = startOfWeek.plusDays(6) // Sunday
-        return this.isAfter(startOfWeek.minusDays(1)) && this.isBefore(endOfWeek.plusDays(1))
+
+        val now = LocalDate.now()
+        val currentWeek = now.get(WeekFields.ISO.weekOfYear())
+        return this.get(WeekFields.ISO.weekOfYear()) == currentWeek && this.year == now.year
+
     }
     fun LocalDate.isLastWeek(): Boolean {
-        val today = LocalDate.now()
-        val oneWeekAgo = today.minusWeeks(1)
-        return this.isAfter(oneWeekAgo) && this.isBefore(today)
+        val now = LocalDate.now()
+        val currentWeek = now.get(WeekFields.ISO.weekOfYear())
+        return this.get(WeekFields.ISO.weekOfYear()) == currentWeek - 1 && this.year == now.year
+
     }
 
     fun LocalDate.isLastMonth(): Boolean {
-        val today = LocalDate.now()
-        val oneMonthAgo = today.minusMonths(1)
-        return this.isAfter(oneMonthAgo) && this.isBefore(today)
+        val now = LocalDate.now()
+        return this.month == now.minusMonths(1).month && this.year == now.year
+
     }
 }
 
