@@ -3,5 +3,5 @@
     <string name="txtBtnGoToInventory">Inventory</string>
     <string name="txtBtnGoToReports">Reports</string>
     <string name="txtBtnAddNewProduct">Add New Product</string>
-    <string name="txtBtnGoToUsers">Users</string>
+    <string name="txtBtnGoToUsers">UserActivity</string>
 </resources>

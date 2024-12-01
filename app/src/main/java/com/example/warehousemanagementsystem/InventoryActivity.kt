@@ -8,9 +8,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.EditText
 import android.widget.Spinner
-import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -50,12 +48,12 @@ class InventoryActivity : AppCompatActivity() {
         setUpInventoryRecyclerView()
         setUpCategorySpinner()
         fetchProducts()
-      //  fetchUserProfile()
+        //  fetchUserProfile()
 
         addProductButton.setOnClickListener {
 //            val intent = Intent(this, AddProductFormActivity::class.java)
             val intent = Intent(this, AddproductForm2Activity::class.java)
-         startActivity(intent)
+            startActivity(intent)
         }
     }
 

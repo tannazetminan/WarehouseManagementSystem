@@ -31,12 +31,6 @@
             android:layout_height="48dp" />
 
         <!-- Button to filter transactions -->
-        <Button
-            android:id="@+id/filterTransactionsButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Filter"
-            android:backgroundTint="@color/primaryColor"/>
 
         <!-- RecyclerView to display transactions -->
         <androidx.recyclerview.widget.RecyclerView

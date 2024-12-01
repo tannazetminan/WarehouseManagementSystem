@@ -36,22 +36,17 @@ android {
 }
 
 dependencies {
-
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
+    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("com.github.bumptech.glide:glide:4.15.1")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
+    implementation("com.github.AnyChart:AnyChart-Android:1.1.3") // Update to latest
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.recyclerview)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-
-    implementation("com.squareup.retrofit2:retrofit:2.9.0") // Retrofit for making API calls
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0") // Gson converter for JSON
-    implementation("com.squareup.okhttp3:logging-interceptor:4.9.0") // Optional for logging
-    implementation("com.google.code.gson:gson:2.8.8") // Gson library
-    implementation ("com.github.bumptech.glide:glide:4.15.1")// For loading images
-    annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
-
 }

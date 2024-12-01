@@ -73,6 +73,10 @@ interface ApiService {
     @GET("retrieve_user_by_id/{user_id}")
     fun getUserById(@Path("user_id") userId: String): Call<User>
 
+    //get all sessions for admin tracking
+    @GET("get_all_sessions")
+    fun getAllSessions(): Call<List<Session>>
+
 }
 data class LoginResponse(
     val message: String,

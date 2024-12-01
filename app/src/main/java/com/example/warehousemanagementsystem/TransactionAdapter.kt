@@ -1,5 +1,6 @@
 package com.example.warehousemanagementsystem
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,7 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class TransactionAdapter   (private var transactionList: List<Transaction>, private val onItemClick: (Transaction) -> Unit
+
+class TransactionAdapter(
+    private var transactionList: List<Transaction>,
+    private val onItemClick: (Transaction) -> Unit
 ) : RecyclerView.Adapter<TransactionAdapter.TransactionViewHolder>() {
 
     inner class TransactionViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -18,10 +22,10 @@ class TransactionAdapter   (private var transactionList: List<Transaction>, priv
 
         fun bind(transaction: Transaction) {
             // Format the transaction date to a more readable format
-            val date = formatTransactionDate(transaction.transDateAndTime)
+            val date = formatTransactionDate(transaction.transDate)
             transactionId.text = "Transaction ID: ${transaction.transId}"
             transactionDate.text = "Date: $date"
-            transactionTotal.text = "Total: $${transaction.transTotal}"
+            transactionTotal.text = "Total: $${transaction.calculateTransTotal()}" //updated to call the function, not property
 
             itemView.setOnClickListener { onItemClick(transaction) }
         }
@@ -29,7 +33,7 @@ class TransactionAdapter   (private var transactionList: List<Transaction>, priv
         // Helper function to format the transaction date
         private fun formatTransactionDate(dateString: String): String {
             return try {
-                val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
                 val date = dateFormat.parse(dateString)
                 val formattedDate = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
                 date?.let { formattedDate.format(it) } ?: "Unknown Date"
@@ -55,6 +59,8 @@ class TransactionAdapter   (private var transactionList: List<Transaction>, priv
 
     // Function to update the transaction list when new data is available
     fun updateList(newList: List<Transaction>) {
+        Log.d("TransactionAdapter", "Updating list with ${newList.size} items")
+        newList.forEach { Log.d("TransactionAdapter", "Transaction: $it") }
         transactionList = newList
         notifyDataSetChanged() // Notify the adapter that the data has changed
     }
