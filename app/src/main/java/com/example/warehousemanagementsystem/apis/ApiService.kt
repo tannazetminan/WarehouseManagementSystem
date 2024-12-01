@@ -1,5 +1,9 @@
-package com.example.warehousemanagementsystem
+package com.example.warehousemanagementsystem.apis
 
+import com.example.warehousemanagementsystem.Product
+import com.example.warehousemanagementsystem.Transaction
+import com.example.warehousemanagementsystem.User
+import com.example.warehousemanagementsystem.UserProfile
 import retrofit2.Call
 import retrofit2.http.*
 import okhttp3.MultipartBody

@@ -2,7 +2,6 @@ package com.example.warehousemanagementsystem
 
 import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -11,6 +10,10 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.warehousemanagementsystem.apis.ApiService
+import com.example.warehousemanagementsystem.apis.ImageResponse
+import com.example.warehousemanagementsystem.apis.RetrofitClient
+import com.example.warehousemanagementsystem.apis.readBaseUrl
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody

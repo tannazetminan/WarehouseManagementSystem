@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.Spinner
@@ -11,10 +12,11 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.warehousemanagementsystem.apis.ApiService
+import com.example.warehousemanagementsystem.apis.RetrofitClient
+import com.example.warehousemanagementsystem.apis.readBaseUrl
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -37,7 +39,6 @@ class ReportsActivity : AppCompatActivity() {
 
         transactionRecyclerView = findViewById(R.id.transactionRecyclerView)
         transactionDateSpinner = findViewById(R.id.transactionsDateSpinner)
-        transactionFilterButton = findViewById(R.id.filterTransactionsButton)
         transactionReportTextView = findViewById(R.id.txvTransactionReportSummary)
 
         // Initialize API service
@@ -45,12 +46,8 @@ class ReportsActivity : AppCompatActivity() {
         apiService = RetrofitClient.getRetrofitInstance(baseUrl).create(ApiService::class.java)
 
         setUpTransactionRecyclerView()
-
         setUpDateSpinner()
-        transactionFilterButton.setOnClickListener {
-            val selectedDate = transactionDateSpinner.selectedItem.toString()
-            filterTransactionsByDate(selectedDate)
-        }
+
 
         // Fetch all transactions initially
         fetchTransactions()
@@ -65,10 +62,8 @@ class ReportsActivity : AppCompatActivity() {
             intent.putExtra("transaction_id", transaction.transId) // Pass the transaction ID
             startActivity(intent)
         }
-
         // Set the layout manager for the RecyclerView
         transactionRecyclerView.layoutManager = LinearLayoutManager(this)
-
         // Set the adapter for the RecyclerView
         transactionRecyclerView.adapter = transactionAdapter
     }
@@ -79,40 +74,61 @@ class ReportsActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     transactionList.clear()
                     transactionList.addAll(response.body()!!)
+
+                    // Generate the financial report on default
+                    val report = generateFinancialReport(transactionList)
+                    transactionReportTextView.text = report
+                    transactionReportTextView.visibility = View.VISIBLE
+
+                    // Notify the adapter that the data has changed
                     transactionAdapter.notifyDataSetChanged()
                 } else {
                     Toast.makeText(this@ReportsActivity, "Failed to load transactions", Toast.LENGTH_SHORT).show()
                 }
             }
-
             override fun onFailure(call: Call<List<Transaction>>, t: Throwable) {
                 Toast.makeText(this@ReportsActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
     }
 
-
-
-
     private fun setUpDateSpinner() {
-        val dateFilters = listOf("All Time", "Last Week", "Last Month", "Custom Date")
+        //no custom date
+        //val dateFilters = listOf("All Time", "Last Week", "Last Month", "Custom Date")
+        val dateFilters = listOf("All Time", "This Week","Last Week", "Last Month")
         val dateFilterAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, dateFilters)
         dateFilterAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         transactionDateSpinner.adapter = dateFilterAdapter
+
+        // Set listener for spinner selection
+        transactionDateSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                val selectedDate = dateFilters[position]
+                filterTransactionsByDate(selectedDate)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
     }
 
     private fun filterTransactionsByDate(selectedDate: String) {
         val filteredTransactions = when (selectedDate) {
             "Last Week" -> transactionList.filter {
-                it.transDateAndTime.toLocalDate()?.isLastWeek() == true
+                Log.d("ReportsActivity", "Last week, transactionDate is ${it.transDate}")
+                it.transDate.toLocalDate()?.isLastWeek() == true
             }
             "Last Month" -> transactionList.filter {
-                it.transDateAndTime.toLocalDate()?.isLastMonth() == true
+                it.transDate.toLocalDate()?.isLastMonth() == true
             }
-            "Custom Date" -> {
-                // Implement custom date filtering logic (open date picker or other mechanism)
-                transactionList
+            "This Week" -> transactionList.filter {
+                Log.d("ReportsActivity", "This week, transactionDate is ${it.transDate}")
+                it.transDate.toLocalDate()?.isThisWeek() == true
             }
+            //Commented this for now, as it's not super necessary
+//            "Custom Date" -> {
+//                // Implement custom date filtering logic (open date picker or other mechanism)
+//                transactionList
+//            }
             else -> transactionList
         }
 
@@ -159,7 +175,7 @@ class ReportsActivity : AppCompatActivity() {
     }
 
     private fun calculateTotalSales(transactionList: List<Transaction>): Double {
-        return transactionList.sumOf { it.transTotal }
+        return transactionList.sumOf { it.calculateTransTotal() }
     }
 
     private fun calculateTotalProfit(transactionList: List<Transaction>): Double {
@@ -176,7 +192,12 @@ class ReportsActivity : AppCompatActivity() {
             null
         }
     }
-
+    fun LocalDate.isThisWeek(): Boolean {
+        val today = LocalDate.now()
+        val startOfWeek = today.minusDays(today.dayOfWeek.value.toLong() - 1) // Monday
+        val endOfWeek = startOfWeek.plusDays(6) // Sunday
+        return this.isAfter(startOfWeek.minusDays(1)) && this.isBefore(endOfWeek.plusDays(1))
+    }
     fun LocalDate.isLastWeek(): Boolean {
         val today = LocalDate.now()
         val oneWeekAgo = today.minusWeeks(1)

@@ -1,15 +1,15 @@
 package com.example.warehousemanagementsystem
 
-import ProductsAdapter
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.warehousemanagementsystem.apis.ApiService
+import com.example.warehousemanagementsystem.apis.RetrofitClient
+import com.example.warehousemanagementsystem.apis.readBaseUrl
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

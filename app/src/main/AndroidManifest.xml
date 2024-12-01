@@ -45,6 +45,7 @@
         <activity android:name=".AddproductForm2Activity" />
         <activity android:name=".InventoryActivity" />
         <activity android:name=".InventoryProductDetailActivity" />
+        <activity android:name=".InventoryProductEditActivity" />
     </application>
 
 </manifest>

@@ -1,4 +1,4 @@
-package com.example.warehousemanagementsystem
+package com.example.warehousemanagementsystem.apis
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
