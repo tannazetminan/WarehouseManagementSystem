@@ -12,13 +12,14 @@ import com.bumptech.glide.Glide
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.Locale
 
 class TransactionDetailActivity : AppCompatActivity() {
 
 
     private lateinit var apiService: ApiService
 
-    private var transactionId: String ? =null;
+    private var transactionId: String ? =null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -47,16 +48,19 @@ class TransactionDetailActivity : AppCompatActivity() {
                         findViewById<TextView>(R.id.txvTransactionDetailDate).text = it.transDate
                         findViewById<TextView>(R.id.txvTransactionDetailTime).text = it.transTime
                         val total=it.calculateTransTotal()
-                        findViewById<TextView>(R.id.txvTransactionDetailTotal).text = "$$total"
+                        val totalString =  String.format(Locale.US, "$ %.2f", total)
+                        findViewById<TextView>(R.id.txvTransactionDetailTotal).text = totalString
                         val products = it.products
                         if (products.isNotEmpty()) {
                             // Create a string to display product details
                             val productDetails = StringBuilder()
                             for (product in products) {
+
+                                val salePriceString =  String.format(Locale.US, "Price: $ %.2f", product.salePrice)
                                 productDetails.append("Product Name: ${product.prodName}\n")
                                 productDetails.append("Description: ${product.prodDescription}\n")
                                 productDetails.append("Category: ${product.prodCategory}\n")
-                                productDetails.append("Price: $${product.salePrice}\n")
+                                productDetails.append("Price: $${salePriceString}\n")
                                 productDetails.append("Quantity: ${product.quantity}\n\n")
                             }
 
