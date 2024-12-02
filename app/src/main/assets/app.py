@@ -615,7 +615,17 @@ def retrieve_all_transactions():
     transactions_list = []
 
     for transaction in transactions:
-        transaction = convert_objectid_to_str(transaction)  # Convert all ObjectId fields to string
+        transaction['_id'] = str(transaction['_id'])  # Convert ObjectId to string
+        for product in transaction.get('products', []):
+            # Check if '_id' exists and is an ObjectId, or if 'prodID' exists
+            if '_id' in product:  # If '_id' exists
+                if isinstance(product['_id'], ObjectId):
+                    product['_id'] = str(product['_id'])  
+                    # Convert ObjectId to string
+            elif 'prodID' in product:  # If 'prodID' exists (the first format)
+                product['_id'] = product['prodID']  # Set '_id' to 'prodID' as string
+        
+        # Add the modified transaction to the list
         transactions_list.append(transaction)
 
     return jsonify(transactions_list), 200
@@ -627,9 +637,18 @@ def retrieve_transaction_by_id(transaction_id):
 
     if transaction:
         transaction['_id'] = str(transaction['_id'])
+        for product in transaction.get('products', []):
+            # Check if '_id' exists and is an ObjectId, or if 'prodID' exists
+            if '_id' in product:  # If '_id' exists
+                if isinstance(product['_id'], ObjectId):
+                    product['_id'] = str(product['_id'])  
+                    # Convert ObjectId to string
+            elif 'prodID' in product:  # If 'prodID' exists (the first format)
+                product['_id'] = product['prodID']  # Set '_id' to 'prodID' as string
         return jsonify(transaction), 200
     else:
         return jsonify({"error": "Transaction not found"}), 404
+
 
 # CART APIs
 # Endpoint to add a product to the cart
