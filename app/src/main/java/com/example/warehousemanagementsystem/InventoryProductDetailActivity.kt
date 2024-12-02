@@ -12,6 +12,7 @@ import com.bumptech.glide.Glide
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.Locale
 
 class InventoryProductDetailActivity : AppCompatActivity() {
 
@@ -22,7 +23,7 @@ class InventoryProductDetailActivity : AppCompatActivity() {
     private lateinit var btnDeleteProduct: Button
 
 
-    private var productId: String ? =null;
+    private var productId: String ? =null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,8 +41,8 @@ class InventoryProductDetailActivity : AppCompatActivity() {
             fetchProductDetails(productId!!)
         }
 
-        btnDeleteProduct =findViewById(R.id.btnDeleteProduct);
-        btnGoToEditProduct = findViewById(R.id.btnGoToEditProduct);
+        btnDeleteProduct =findViewById(R.id.btnDeleteProduct)
+        btnGoToEditProduct = findViewById(R.id.btnGoToEditProduct)
 
         btnGoToEditProduct.setOnClickListener {
             //put product id in intent and pass it to new activity. start new activity
@@ -97,12 +98,17 @@ class InventoryProductDetailActivity : AppCompatActivity() {
                 if (response.isSuccessful) {
                     val product = response.body()
                     product?.let {
+
+                        val productCostPriceStr = String.format(
+                            Locale.US, "Cost Price: $ %.2f", it.costPrice)
+                        val productSalePriceStr = String.format(
+                            Locale.US, "Sale Price: $ %.2f", it.salePrice)
                         // Display product details
                         findViewById<TextView>(R.id.ipdProductName).text = it.prodName
                         findViewById<TextView>(R.id.ipdProductCategory).text = "Category: ${it.prodCategory ?: "N/A"}"
                         findViewById<TextView>(R.id.ipdProductDescription).text = it.prodDescription ?: "No description available"
-                        findViewById<TextView>(R.id.ipdProductCostPrice).text = "Cost Price: $${it.costPrice}"
-                        findViewById<TextView>(R.id.ipdProductSalePrice).text = "Sale Price: $${it.salePrice}"
+                        findViewById<TextView>(R.id.ipdProductCostPrice).text = productCostPriceStr
+                        findViewById<TextView>(R.id.ipdProductSalePrice).text = productSalePriceStr
 
                         // Load the image using Glide (if image_url is available)
                         it.image_url?.let { imageUrl ->

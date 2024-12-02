@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import java.util.Locale
 
 class InventoryAdapter(
     private var productList: List<Product>,
@@ -31,11 +32,15 @@ class InventoryAdapter(
         val btnUpdateInventory: Button = view.findViewById(R.id.btnUpdateInventory)
 
         fun bind(product: Product) {
+            val productCostPriceStr = String.format(
+                Locale.US, "$ %.2f", product.costPrice)
+            val productSalePriceStr = String.format(
+                Locale.US, "$ %.2f", product.salePrice)
             productName.text = product.prodName + ". id: " + product._id
             productCategory.text = product.prodCategory ?: "Unknown"
             productDescription.text = product.prodDescription ?: "Unknown"
-            productCostPrice.text = "$${product.costPrice}"
-            productSalePrice.text = "$${product.salePrice}"
+            productCostPrice.text = productCostPriceStr
+            productSalePrice.text = productSalePriceStr
             tvCurrentQuantity.setText(product.quantity?.toString() ?: "0") // Editable field
 
             Glide.with(itemView)
