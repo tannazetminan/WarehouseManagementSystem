@@ -4,7 +4,9 @@
     <color name="white">#ffffff</color>
     <color name="primaryColor">#3B608B</color>
     <!-- Colors for bar chart -->
-    <color name="green">#00FF00</color> <!-- Highest value -->
-    <color name="yellow">#FFFF00</color> <!-- Medium value -->
-    <color name="red">#FF0000</color> <!-- Lowest value -->
+    <color name="color1">#FF0000</color> <!-- Red -->
+    <color name="color2">#FF6600</color> <!-- Orange -->
+    <color name="color3">#FFFF00</color> <!-- Yellow -->
+    <color name="color4">#66FF00</color> <!-- Light Green -->
+    <color name="color5">#00FF00</color> <!-- Green -->
 </resources>

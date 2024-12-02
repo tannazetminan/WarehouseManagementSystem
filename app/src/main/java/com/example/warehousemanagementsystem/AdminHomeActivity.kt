@@ -1,6 +1,7 @@
 package com.example.warehousemanagementsystem
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.Button
 import android.widget.Toast
@@ -10,6 +11,8 @@ import retrofit2.Response
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
+import android.view.View
+import android.widget.TextView
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
@@ -36,12 +39,15 @@ class AdminHomeActivity : AppCompatActivity() {
         val btnGoToInventory: Button = findViewById(R.id.btnGoToInventory)
         val btnGoToReports: Button = findViewById(R.id.btnGoToReports)
         val btnGoToUsers: Button = findViewById(R.id.btnGoToUsers)
+        val productList = mutableMapOf<String, Int>()
 
         val baseUrl = readBaseUrl(this)
         apiService = RetrofitClient.getRetrofitInstance(baseUrl).create(ApiService::class.java)
         // Retrieve user ID from SharedPreferences
         val sharedPreferences = getSharedPreferences("UserPreferences", MODE_PRIVATE)
         userId = sharedPreferences.getString("user_id", null)
+        // Fetch all products and check for low stock
+        fetchAllProducts()
 
         fetchTopProducts()  // Fetch products from API
 
@@ -76,6 +82,35 @@ class AdminHomeActivity : AppCompatActivity() {
         // Call displayChart here to ensure the view is initialized
         displayChart()
     }
+    private fun fetchAllProducts() {
+        apiService.getAllProducts().enqueue(object : Callback<List<Product>> {
+            override fun onResponse(call: Call<List<Product>>, response: Response<List<Product>>) {
+                if (response.isSuccessful) {
+                    val productList = response.body()!!
+                    checkLowStock(productList)  // Check if any products are low on stock
+                } else {
+                    Log.e("AdminHomeActivity", "Failed to load products")
+                    Toast.makeText(this@AdminHomeActivity, "Failed to load products", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<Product>>, t: Throwable) {
+                Toast.makeText(this@AdminHomeActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun checkLowStock(products: List<Product>) {
+        val lowStockProducts = products.filter { it.quantity ?: 0 < 5 }
+
+        if (lowStockProducts.isNotEmpty()) {
+            val warningTextView: TextView = findViewById(R.id.tvStockWarning)
+            warningTextView.text = "One or more of your products' stock is running low. Go to Inventory to update the stock."
+            warningTextView.setTextColor(Color.RED)
+            warningTextView.visibility = View.VISIBLE
+        }
+    }
+
     private fun fetchTopProducts() {
         apiService.getAllTransactions().enqueue(object : Callback<List<Transaction>> {
             override fun onResponse(call: Call<List<Transaction>>, response: Response<List<Transaction>>) {
@@ -196,10 +231,15 @@ class AdminHomeActivity : AppCompatActivity() {
      */
     private fun getColorForValue(value: Float, minValue: Float, maxValue: Float): Int {
         val ratio = (value - minValue) / (maxValue - minValue) // Normalize value between 0 and 1
+
         return when {
-            ratio >= 0.75 -> resources.getColor(R.color.green, null) // High value (Green)
-            ratio >= 0.5 -> resources.getColor(R.color.yellow, null) // Medium value (Yellow)
-            else -> resources.getColor(R.color.red, null) // Low value (Red)
+            ratio >= 0.8 -> resources.getColor(R.color.color5, null) // High value (Green)
+            ratio >= 0.6 -> resources.getColor(R.color.color4, null) // Very High (Light Green)
+            ratio >= 0.4 -> resources.getColor(R.color.color3, null) // Medium High (Yellow)
+            ratio >= 0.2 -> resources.getColor(R.color.color2, null) // Medium Low (Orange)
+            else -> resources.getColor(R.color.color1, null) // Low (Red)
         }
     }
+
 }
+

@@ -37,7 +37,7 @@ interface ApiService {
     ): Call<Void>
 
     @GET("/cart/{userId}")
-    fun getCartItems(@Path("userId") userId: String): Call<List<Product>>
+    fun getCartItems(@Path("userId") userId: String): Call<List<CartItem>>
 
     @DELETE("/cart/{userId}/{productId}")
     fun removeCartItem(@Path("userId") userId: String, @Path("productId") productId: String): Call<Void>

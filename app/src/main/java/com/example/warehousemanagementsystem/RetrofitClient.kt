@@ -17,6 +17,7 @@ object RetrofitClient {
             }
 
             val client = OkHttpClient.Builder()
+                .cache(null)  // Disables caching
                 .connectTimeout(60, TimeUnit.SECONDS)
                 .readTimeout(60, TimeUnit.SECONDS)
                 .writeTimeout(60, TimeUnit.SECONDS)

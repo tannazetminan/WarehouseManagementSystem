@@ -60,6 +60,23 @@
         android:layout_marginBottom="16dp"/>
 
     <TextView
+        android:id="@+id/tvProductImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Product Image Link"
+        android:textSize="16sp"
+        android:textColor="#000000"
+        android:paddingBottom="4dp"/>
+    <EditText
+        android:id="@+id/etProductImageUrl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter Image URL (optional)"
+        android:inputType="textUri"
+        android:layout_marginBottom="16dp"/>
+
+
+    <TextView
         android:id="@+id/tvProductDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -22,19 +22,18 @@ import java.io.FileOutputStream
 
 class AddProductFormActivity : AppCompatActivity() {
 
-
     private lateinit var apiService: ApiService
 
     private lateinit var imageView: ImageView
     private lateinit var uploadButton: Button
     private lateinit var btnSubmitProduct: Button
-
     private lateinit var etProductName: EditText
     private lateinit var etProductDescription: EditText
     private lateinit var etProductCategory: EditText
     private lateinit var etProductSalePrice: EditText
     private lateinit var etProductCostPrice: EditText
     private lateinit var etProductQuantity: EditText
+    private lateinit var etProductImageUrl: EditText  // EditText for Image URL
 
     private var selectedImageUri: Uri? = null
     private var imageUrl: String? = null // URL from uploaded image
@@ -46,13 +45,13 @@ class AddProductFormActivity : AppCompatActivity() {
         imageView = findViewById(R.id.imageView)
         uploadButton = findViewById(R.id.uploadButton)
         btnSubmitProduct = findViewById(R.id.btnSubmitProduct)
-
         etProductName = findViewById(R.id.etProductName)
         etProductDescription = findViewById(R.id.etProductDescription)
         etProductCategory = findViewById(R.id.etProductCategory)
         etProductSalePrice = findViewById(R.id.etProductSalePrice)
         etProductCostPrice = findViewById(R.id.etProductCostPrice)
         etProductQuantity = findViewById(R.id.etProductQuantity)
+        etProductImageUrl = findViewById(R.id.etProductImageUrl) // Find the URL EditText
 
         // Choose image from gallery
         uploadButton.setOnClickListener {
@@ -63,7 +62,12 @@ class AddProductFormActivity : AppCompatActivity() {
         // Submit product form
         btnSubmitProduct.setOnClickListener {
             if (validateForm()) {
-                uploadImageAndCreateProduct()
+                if (selectedImageUri != null) {
+                    uploadImageAndCreateProduct()  // Upload image if selected from device
+                } else if (etProductImageUrl.text.isNotEmpty()) {
+                    imageUrl = etProductImageUrl.text.toString()  // Use URL if provided
+                    createProduct()  // Create product with the provided URL
+                }
             }
         }
     }
@@ -74,6 +78,7 @@ class AddProductFormActivity : AppCompatActivity() {
         if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
             selectedImageUri = data?.data
             imageView.setImageURI(selectedImageUri)
+            etProductImageUrl.setText("")  // Clear URL field when image is selected
         }
     }
 
@@ -93,12 +98,11 @@ class AddProductFormActivity : AppCompatActivity() {
                 false
             }
             etProductQuantity.text.isEmpty() -> {
-                etProductCostPrice.error = "Please enter quantity"
+                etProductQuantity.error = "Please enter quantity"
                 false
             }
-
-            selectedImageUri == null -> {
-                Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show()
+            selectedImageUri == null && etProductImageUrl.text.isEmpty() -> {
+                Toast.makeText(this, "Please select an image or enter an image URL", Toast.LENGTH_SHORT).show()
                 false
             }
             else -> true
@@ -137,7 +141,8 @@ class AddProductFormActivity : AppCompatActivity() {
             })
         }
     }
-    //get file name function
+
+    // Get file name from URI
     private fun getFileName(uri: Uri): String {
         var fileName = ""
         if (uri.scheme == "content") {
@@ -153,10 +158,10 @@ class AddProductFormActivity : AppCompatActivity() {
         return fileName
     }
 
-    // Create a product after image is uploaded
+    // Create product after image is uploaded
     private fun createProduct() {
         val product = Product(
-            _id= null.toString(),
+            _id = null.toString(),
             prodName = etProductName.text.toString(),
             prodDescription = etProductDescription.text.toString(),
             prodCategory = etProductCategory.text.toString(),
@@ -165,6 +170,7 @@ class AddProductFormActivity : AppCompatActivity() {
             quantity = etProductQuantity.text.toString().toInt(),
             image_url = imageUrl
         )
+
         // Initialize API service
         val baseUrl = readBaseUrl(this)
         apiService = RetrofitClient.getRetrofitInstance(baseUrl).create(ApiService::class.java)
