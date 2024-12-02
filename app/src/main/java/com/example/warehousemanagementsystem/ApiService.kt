@@ -39,7 +39,6 @@ interface ApiService {
     @GET("/cart/{userId}")
     fun getCartItems(@Path("userId") userId: String): Call<List<Product>>
 
-
     @DELETE("/cart/{userId}/{productId}")
     fun removeCartItem(@Path("userId") userId: String, @Path("productId") productId: String): Call<Void>
 
@@ -62,6 +61,9 @@ interface ApiService {
         @Path("product_id") productId: String,
         @Body product: Product
     ):Call<Void>
+
+    @POST("create_transaction")
+    fun createTransaction(@Body transaction: Transaction): Call<Void>
 
     @GET("retrieve_all_transactions")
     fun getAllTransactions(): Call<List<Transaction>>

@@ -227,6 +227,23 @@ def end_session():
     else:
         return jsonify(message="No active session found"), 404
 
+
+
+# Test via curl -X DELETE http://98.81.22.118:8888/delete_all_sessions
+@app.route('/delete_all_sessions', methods=['DELETE'])
+def delete_all_sessions():
+    try:
+        # Delete all sessions from the sessions collection
+        result = sessions_collection.delete_many({})
+
+        # Check if any sessions were deleted
+        if result.deleted_count > 0:
+            return jsonify(message="All sessions deleted successfully"), 200
+        else:
+            return jsonify(message="No sessions found to delete"), 404
+    except Exception as e:
+        return jsonify(message=f"An error occurred: {str(e)}"), 500
+
 #USER APIs
 # Endpoint to register
 @app.route('/register', methods=['POST'])
@@ -558,7 +575,10 @@ def create_transaction():
     }
     transactions_collection.insert_one(transaction_data)
 
-    return jsonify({"message": "Transaction completed successfully"}), 201
+    # Clear the user's cart after the transaction is successfully created
+    cart_collection.delete_many({"user_id": user_id})
+
+    return jsonify({"message": "Transaction completed successfully, cart cleared"}), 201
 
 # Endpoint to retrieve all transactions
 @app.route('/retrieve_all_transactions', methods=['GET'])
@@ -641,7 +661,7 @@ def get_cart_items(user_id):
 
     return jsonify(products), 200
 
-# Endpoint to remov one item from the cart
+# Endpoint to remove one item from the cart
 @app.route("/cart/<user_id>/<product_id>", methods=["DELETE"])
 def clear_cart_item(user_id, product_id):
     result = cart_collection.delete_one({"user_id": user_id, "product_id": product_id})

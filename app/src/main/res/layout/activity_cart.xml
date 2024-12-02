@@ -36,10 +36,30 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/cartRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="374dp"
+        android:layout_height="534dp"
         android:layout_below="@+id/linearLayout"
         android:layout_marginTop="0dp"
         android:clipToPadding="false"
         android:padding="16dp" />
+
+    <LinearLayout
+        android:id="@+id/navigationButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        android:layout_marginBottom="619dp"
+        android:orientation="horizontal">
+        <!-- Checkout Button -->
+        <Button
+            android:id="@+id/btnCheckout"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_marginBottom="10dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/primaryColor"
+            android:text="Checkout" />
+    </LinearLayout>
+
 </RelativeLayout>
