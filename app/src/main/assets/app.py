@@ -530,55 +530,83 @@ def update_product_quantity(product_id):
 # Endpoint to create transaction
 @app.route('/create_transaction', methods=['POST'])
 def create_transaction():
-    data = request.get_json()
-    user_id = data['user_id']  # User ID from the transaction request
-    products = data['products']  # List of products in the transaction
-    # Get the current date and time
-    current_datetime = datetime.now()
-    # Set 'trans_date' to today's date and 'trans_time' to the current time
-    trans_date = current_datetime.date().strftime('%Y-%m-%d')  # Format date as 'YYYY-MM-DD'
-    trans_time = current_datetime.strftime('%H:%M:%S')  # Format time as 'HH:MM:SS'
+    try:
+        data = request.get_json()
 
-    # Iterate over each product in the transaction to update its quantity
-    for product_data in products:
-        prod_name = product_data['prodName']
-        quantity_purchased = int(product_data['quantity'])  # Convert the purchased quantity to an integer
+        # Retrieve user ID from the request
+        user_id = data['user_id']
 
-        # Find the product in the database by its name
-        product = products_collection.find_one({"prodName": prod_name})
+        # Fetch the user's cart items
+        cart_items = list(cart_collection.find({"user_id": user_id}))
 
-        if product:
-            # Convert the stored quantity (string) to an integer
-            current_quantity = int(product['quantity'])
+        if not cart_items:
+            return jsonify({"error": "Cart is empty"}), 400
 
-            # Check if there is enough stock
-            if current_quantity >= quantity_purchased:
-                # Calculate the new quantity
-                new_quantity = current_quantity - quantity_purchased
+        # Get the current date and time
+        current_datetime = datetime.now()
+        trans_date = current_datetime.strftime('%Y-%m-%d')  # Date format: YYYY-MM-DD
+        trans_time = current_datetime.strftime('%H:%M:%S')  # Time format: HH:MM:SS
 
-                # Update the product quantity in the database
-                products_collection.update_one(
-                    {"prodName": prod_name},
-                    {"$set": {"quantity": str(new_quantity)}}  # Store the updated quantity as a string
-                )
-            else:
-                return jsonify({"error": f"Not enough stock for {prod_name}"}), 400
-        else:
-            return jsonify({"error": f"Product {prod_name} not found"}), 404
+        # Prepare an empty list to hold the products for the transaction
+        transaction_products = []
 
-    # You can also save the transaction data if needed
-    transaction_data = {
-        "user_id": user_id,
-        "products": products,
-        "trans_date": trans_date,
-        "trans_time": trans_time
-    }
-    transactions_collection.insert_one(transaction_data)
+        # Process each item in the cart
+        for item in cart_items:
+            product_id = item["product_id"]
+            quantity_purchased = item["quantity"]  # Cart quantity
 
-    # Clear the user's cart after the transaction is successfully created
-    cart_collection.delete_many({"user_id": user_id})
+            # Find the product in the database
+            product = products_collection.find_one({"_id": ObjectId(product_id)})
+            if not product:
+                return jsonify({"error": f"Product not found"}), 404
 
-    return jsonify({"message": "Transaction completed successfully, cart cleared"}), 201
+            current_quantity = int(product['quantity'])  # Current stock in inventory
+
+            # Check stock availability against cart quantity
+            if current_quantity < quantity_purchased:
+                return jsonify({"error": f"Not enough stock for {product['prodName']}"}), 400
+
+            # Clone the product data, preserving the cart quantity
+            transaction_product = {
+                "_id": product['_id'],  # Use product ID from the database
+                "prodName": product['prodName'],
+                "quantity": quantity_purchased,  # Use cart quantity
+                "salePrice": product['salePrice'],
+                "costPrice": product['costPrice'],
+                "prodCategory": product['prodCategory'],
+                "prodDescription": product['prodDescription'],
+                "image_url": product['image_url']
+            }
+            transaction_products.append(transaction_product)
+
+            # Update product stock in the database by subtracting the cart quantity
+            new_quantity = current_quantity - quantity_purchased
+            products_collection.update_one(
+                {"_id": ObjectId(product_id)},
+                {"$set": {"quantity": new_quantity}}  # Update inventory stock
+            )
+
+        # Record the transaction in the database
+        transaction_data = {
+            "user_id": user_id,
+            "products": transaction_products,
+            "trans_date": trans_date,
+            "trans_time": trans_time
+        }
+        transactions_collection.insert_one(transaction_data)
+
+        # Clear the user's cart
+        cart_collection.delete_many({"user_id": user_id})
+
+        return jsonify({"message": "Transaction completed successfully, cart cleared"}), 201
+
+    except KeyError as e:
+        return jsonify({"error": f"Missing key in request data: {str(e)}"}), 400
+    except ValueError as e:
+        return jsonify({"error": f"Invalid data format: {str(e)}"}), 400
+    except Exception as e:
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
+
 
 # Endpoint to retrieve all transactions
 @app.route('/retrieve_all_transactions', methods=['GET'])
@@ -587,7 +615,7 @@ def retrieve_all_transactions():
     transactions_list = []
 
     for transaction in transactions:
-        transaction['_id'] = str(transaction['_id'])  # Convert ObjectId to string
+        transaction = convert_objectid_to_str(transaction)  # Convert all ObjectId fields to string
         transactions_list.append(transaction)
 
     return jsonify(transactions_list), 200
@@ -627,39 +655,106 @@ def add_to_cart(user_id):
     # Check if the product is already in the user's cart
     existing_item = cart_collection.find_one({"user_id": user_id, "product_id": product_id})
     if existing_item:
-        return jsonify({"message": "Product already in cart"}), 200
+        # Increment the quantity by 1 if the item is already in the cart
+        cart_collection.update_one(
+            {"user_id": user_id, "product_id": product_id},
+            {"$inc": {"quantity": 1}}
+        )
+        return jsonify({"message": "Product quantity incremented by 1 in cart"}), 200
 
-    # Add product to the cart
+    # Add product to the cart with default quantity 1 if it's not already in the cart
     cart_item = {
         "user_id": user_id,
-        "product_id": product_id
+        "product_id": product_id,
+        "quantity": 1
     }
     cart_collection.insert_one(cart_item)
 
-    # Now increment the session counter
-    session['username'] = user_id  # Assuming session is associated with user_id
-    increment()
-
-    return jsonify({"message": "Product added to cart"}), 201
+    return jsonify({"message": "Product added to cart with quantity 1"}), 201
 
 # Endpoint to get all items in the cart
 @app.route("/cart/<user_id>", methods=["GET"])
 def get_cart_items(user_id):
     cart_items = list(cart_collection.find({"user_id": user_id}))
+
     if not cart_items:
         return jsonify([]), 200
 
-    # Convert product_id strings to ObjectId
-    product_ids = [ObjectId(item["product_id"]) for item in cart_items]
+    result = []
 
-    # Retrieve product details for each product in the cart
-    products = list(products_collection.find({"_id": {"$in": product_ids}}))
+    for item in cart_items:
+        product = products_collection.find_one({"_id": ObjectId(item["product_id"])})
 
-    # Convert MongoDB objects to JSON-friendly format
-    for product in products:
-        product["_id"] = str(product["_id"])
+        if product:
+            product_details = {
+                "_id": str(product["_id"]),
+                "prodName": product.get("prodName"),
+                "prodDescription": product.get("prodDescription"),
+                "prodCategory": product.get("prodCategory"),
+                "salePrice": product.get("salePrice"),
+                "costPrice": product.get("costPrice"),
+                "quantity": int(product.get("quantity", 0)),  # Ensure it's an integer
+                "image_url": product.get("image_url")
+            }
 
-    return jsonify(products), 200
+            cart_item_details = {
+                "productId": item["product_id"],
+                "quantity": item["quantity"],
+                "product": product_details
+            }
+            result.append(cart_item_details)
+        else:
+            product_details = {
+                "_id": "Unknown",
+                "prodName": "Unknown Product",
+                "prodDescription": None,
+                "prodCategory": None,
+                "salePrice": 0.0,
+                "costPrice": 0.0,
+                "quantity": 0,
+                "image_url": None
+            }
+            cart_item_details = {
+                "productId": item["product_id"],
+                "quantity": item["quantity"],
+                "product": product_details
+            }
+            result.append(cart_item_details)
+
+    return jsonify(result), 200
+
+# (Not Used)Endpoint to update the quantity of a single product in the cart
+@app.route('/cart/<user_id>/update_quantity/<product_id>', methods=['PUT'])
+def update_cart_quantity(user_id, product_id):
+    data = request.get_json()
+    new_quantity = data.get("quantity")
+
+    if not new_quantity or not new_quantity.isdigit():
+        return jsonify({"error": "Invalid quantity provided"}), 400
+
+    try:
+        # Fetch the product details
+        product = products_collection.find_one({"_id": ObjectId(product_id)})
+        if not product:
+            return jsonify({"error": "Product not found"}), 404
+
+        # Ensure sufficient stock exists
+        if int(new_quantity) > int(product["quantity"]):
+            return jsonify({"error": "Not enough stock available"}), 400
+
+        # Update the cart item's quantity
+        result = cart_collection.update_one(
+            {"user_id": user_id, "product_id": product_id},
+            {"$set": {"quantity": int(new_quantity)}}
+        )
+
+        if result.matched_count > 0:
+            return jsonify({"message": f"Quantity updated to {new_quantity} successfully"}), 200
+        else:
+            return jsonify({"error": "Failed to update quantity"}), 404
+
+    except Exception as e:
+        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
 # Endpoint to remove one item from the cart
 @app.route("/cart/<user_id>/<product_id>", methods=["DELETE"])
@@ -674,6 +769,19 @@ def clear_cart_item(user_id, product_id):
 def clear_cart(user_id):
     result = cart_collection.delete_many({"user_id": user_id})
     return jsonify({"message": f"Deleted {result.deleted_count} items from the cart"}), 200
+
+
+# Utility function to convert ObjectId fields to strings
+def convert_objectid_to_str(data):
+    if isinstance(data, dict):
+        return {k: convert_objectid_to_str(v) for k, v in data.items()}
+    elif isinstance(data, list):
+        return [convert_objectid_to_str(item) for item in data]
+    elif isinstance(data, ObjectId):
+        return str(data)
+    else:
+        return data
+
 
 if __name__ == '__main__':
     # Run the application on all available IPs on port 8888
