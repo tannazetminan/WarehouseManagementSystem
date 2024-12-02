@@ -20,6 +20,7 @@ import retrofit2.Response
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.temporal.WeekFields
+import java.util.Locale
 
 class ReportsActivity : AppCompatActivity() {
 
@@ -144,14 +145,17 @@ class ReportsActivity : AppCompatActivity() {
         val transactionCount = transactionsList.size
         val avgTransactionValue = if (transactionCount > 0) totalSales/transactionCount else 0.0
         val mostSoldProducts = calculateMostSoldProducts(transactionsList)
+        val totalSalesStr =String.format(Locale.US, "$ %.2f", totalSales)
+        val totalProfitStr =String.format(Locale.US, "$ %.2f", totalProfit)
+        val avgTransValStr =String.format(Locale.US, "$ %.2f", avgTransactionValue)
 
         return """
             Financial Report:
             -----------------
-            Total Sales: $$totalSales
-            Total Profit: $$totalProfit
+            Total Sales: $totalSalesStr
+            Total Profit: $totalProfitStr
             Number of Transactions: $transactionCount
-            Average Transaction Value: $$avgTransactionValue
+            Average Transaction Value: $avgTransValStr
             Most Sold Products: $mostSoldProducts
         """.trimIndent()
     }

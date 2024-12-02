@@ -20,12 +20,15 @@ class TransactionAdapter(
         val transactionDate: TextView = view.findViewById(R.id.item_transactionDate)
         val transactionTotal: TextView = view.findViewById(R.id.item_transactionTotal)
 
+
         fun bind(transaction: Transaction) {
             // Format the transaction date to a more readable format
             val date = formatTransactionDate(transaction.transDate)
+
+            val transactionTotalStrong =  String.format(Locale.US, "Total $ %.2f", transaction.calculateTransTotal())
             transactionId.text = "Transaction ID: ${transaction.transId}"
             transactionDate.text = "Date: $date"
-            transactionTotal.text = "Total: $${transaction.calculateTransTotal()}" //updated to call the function, not property
+            transactionTotal.text = "${transactionTotalStrong}" //updated to call the function, not property
 
             itemView.setOnClickListener { onItemClick(transaction) }
         }
