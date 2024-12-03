@@ -4,7 +4,7 @@
 # python3 app.py
 # --------------------------------------
 # Run the following commands to install The App:
-# pip install pymongo bcrypt
+# pip install pymongo bcrypt flask-session
 #
 # --------------------------------------
 # curl Commands to Test the API:

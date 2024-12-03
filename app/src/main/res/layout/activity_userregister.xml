@@ -78,5 +78,21 @@
             android:backgroundTint="@color/primaryColor"
             android:text="Register"
             android:textColor="#FFFFFF" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="5dp"
+            android:text="You have already created an account? Please sign in here" />
+
+        <Button
+            android:id="@+id/signinButton"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:backgroundTint="@color/primaryColor"
+            android:text="Sign In"
+            android:textColor="#FFFFFF" />
     </LinearLayout>
 </ScrollView>

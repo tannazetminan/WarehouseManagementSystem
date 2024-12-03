@@ -13,6 +13,7 @@ import retrofit2.Response
 class UserRegisterActivity : AppCompatActivity() {
     private lateinit var apiService: ApiService
     private lateinit var registerButton: Button
+    private lateinit var signinButton: Button
     private lateinit var fullNameEditText: EditText
     private lateinit var passwordEditText: EditText
     private lateinit var emailEditText: EditText
@@ -25,11 +26,13 @@ class UserRegisterActivity : AppCompatActivity() {
         setContentView(R.layout.activity_userregister)
 
         registerButton = findViewById(R.id.registerButton)
+        signinButton = findViewById(R.id.signinButton)
         fullNameEditText = findViewById(R.id.fullnameEditText)
         phoneEditText = findViewById(R.id.phoneEditText)
         emailEditText = findViewById(R.id.emailEditText)
         passwordEditText = findViewById(R.id.passwordEditText)
         adminCodeEditText = findViewById(R.id.adminCodeEditText)
+
 
         // Initialize API service
         val baseUrl = readBaseUrl(this)
@@ -49,6 +52,11 @@ class UserRegisterActivity : AppCompatActivity() {
                 val user = User(fullname, phone, email, password, userType)
                 registerUser(user)
             }
+        }
+
+        signinButton.setOnClickListener {
+            startActivity(Intent(this@UserRegisterActivity, UserSignInActivity::class.java))
+
         }
     }
 

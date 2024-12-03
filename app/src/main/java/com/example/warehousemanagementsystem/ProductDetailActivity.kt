@@ -83,10 +83,13 @@ class ProductDetailActivity : AppCompatActivity() {
                         }
 
                         // Load the image URL using Glide
+//                        Glide.with(this@ProductDetailActivity)
+//                            .load(imageUrl)
+//                            .diskCacheStrategy(DiskCacheStrategy.NONE) // Disable disk caching temporarily
+//                            .error(R.drawable.placeholder)
+//                            .into(productImage)
                         Glide.with(this@ProductDetailActivity)
-                            .load(imageUrl)
-                            .diskCacheStrategy(DiskCacheStrategy.NONE) // Disable disk caching temporarily
-                            .error(R.drawable.placeholder)
+                            .load(product.image_url ?: R.drawable.placeholder)  // Use placeholder image if image_url is null
                             .into(productImage)
 
                     }
