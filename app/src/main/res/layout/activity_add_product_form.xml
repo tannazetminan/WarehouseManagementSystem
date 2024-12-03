@@ -38,6 +38,7 @@
         android:layout_height="wrap_content"
         android:text="Choose Image"
         android:layout_gravity="center"
+        android:backgroundTint="@color/primaryColor"
         android:layout_marginBottom="16dp"/>
 
     <!-- Product Details Section -->
