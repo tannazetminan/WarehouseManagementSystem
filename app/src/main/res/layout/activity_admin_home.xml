@@ -1,86 +1,118 @@
 <!-- File: res/layout/activity_main.xml -->
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
-
-    <TextView
-        android:id="@+id/txvWelcomeAdmin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/txtWelcomeAdmin"
-        android:layout_gravity="center"
-        android:textSize="24sp"/>
+    android:layout_height="match_parent">
 
     <LinearLayout
-        android:layout_marginTop="12dp"
+        android:id="@+id/titleLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
+        android:background="@drawable/edit_text_bg"
         android:orientation="horizontal"
-        >
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/customerWelcomeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|center_vertical"
+            android:layout_weight="0.8"
+            android:text="Welcome Admin\nTo the Store!"
+            android:textAlignment="textStart"
+            android:textColor="@color/primaryColor"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <Button
-            android:id="@+id/btnGoToReports"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/txtBtnGoToReports"
-            android:layout_margin="8dp"
+            android:id="@+id/editProfileButton"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_gravity="center|center_vertical"
+            android:layout_weight="0.2"
             android:backgroundTint="@color/primaryColor"
+            android:text="Profile"
             android:textColor="#FFFFFF"
-            />
-
-        <Button
-            android:id="@+id/btnGoToUsers"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/txtBtnGoToUsers"
-            android:layout_margin="8dp"
-            android:backgroundTint="@color/primaryColor"
-            android:textColor="#FFFFFF"
-            />
-
-        <Button
-            android:id="@+id/btnGoToInventory"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/txtBtnGoToInventory"
-            android:layout_margin="8dp"
-            android:backgroundTint="@color/primaryColor"
-            android:textColor="#FFFFFF"
-            />
+            app:icon="@drawable/edit_profile" />
 
     </LinearLayout>
-    <TextView
-        android:id="@+id/tvStockWarning"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="One or more of your products stock is running low, go to Inventory to update their stock"
-        android:textColor="@android:color/holo_red_dark"
-        android:textSize="16sp"
-        android:visibility="gone"
-        android:layout_marginBottom="10dp"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center" />
 
-    <TextView
-        android:id="@+id/chart_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Top 5 Products"
-        android:textSize="18sp"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="6dp"
-        android:layout_centerHorizontal="true"
-        android:textColor="@android:color/black"
-        android:layout_gravity="center"/>
 
-    <com.github.mikephil.charting.charts.BarChart
-        android:id="@+id/chart_view"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-</LinearLayout>
+        android:layout_height="match_parent"
+        android:layout_below="@+id/titleLayout"
+        android:layout_marginTop="0dp"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnGoToReports"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/primaryColor"
+                android:text="@string/txtBtnGoToReports"
+                android:textColor="#FFFFFF" />
+
+            <Button
+                android:id="@+id/btnGoToUsers"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/primaryColor"
+                android:text="@string/txtBtnGoToUsers"
+                android:textColor="#FFFFFF" />
+
+            <Button
+                android:id="@+id/btnGoToInventory"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:layout_weight="1"
+                android:backgroundTint="@color/primaryColor"
+                android:text="@string/txtBtnGoToInventory"
+                android:textColor="#FFFFFF" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvStockWarning"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
+            android:text="One or more of your products stock is running low, go to Inventory to update their stock"
+            android:textColor="@android:color/holo_red_dark"
+            android:textSize="16sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/chart_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="6dp"
+            android:text="Top 5 Products"
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
+
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/chart_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+
+
+</RelativeLayout>

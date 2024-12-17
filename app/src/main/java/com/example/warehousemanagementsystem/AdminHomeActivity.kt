@@ -22,6 +22,7 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 
 class AdminHomeActivity : AppCompatActivity() {
 
+    private lateinit var editProfileButton: Button
     private lateinit var btnGoToUsers: Button
     private lateinit var btnGoToReports: Button
     private lateinit var topTenRecyclerView: RecyclerView
@@ -36,6 +37,7 @@ class AdminHomeActivity : AppCompatActivity() {
 
         chartView = findViewById(R.id.chart_view)
 
+        editProfileButton = findViewById(R.id.editProfileButton)
         val btnGoToInventory: Button = findViewById(R.id.btnGoToInventory)
         val btnGoToReports: Button = findViewById(R.id.btnGoToReports)
         val btnGoToUsers: Button = findViewById(R.id.btnGoToUsers)
@@ -58,6 +60,12 @@ class AdminHomeActivity : AppCompatActivity() {
 //                displayChart()  // Ensure UI updates are done on the main thread
 //            }
 //        }.start()
+
+
+        // Edit Profile Navigation
+        editProfileButton.setOnClickListener {
+            startActivity(Intent(this, UserProfileActivity::class.java))
+        }
 
         // Navigate to Users Activity
         btnGoToUsers.setOnClickListener {
